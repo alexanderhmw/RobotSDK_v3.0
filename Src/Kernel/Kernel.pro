@@ -61,7 +61,14 @@ INCLUDEPATH += .
 unix{ 
     INCLUDEPATH += /usr/include
 
-    target.path = /opt/RobotSDK/Kernel/lib
+	CONFIG(debug, debug|release){
+		target.path = /opt/RobotSDK/Kernel/lib/Debug
+	}
+	else {
+		target.path = /opt/RobotSDK/Kernel/lib/Release
+	}
+	
+    
     INSTALLS += target
 
     KERNELPATH = /opt/RobotSDK/Kernel/include

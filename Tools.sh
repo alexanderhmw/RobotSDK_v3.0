@@ -2,13 +2,8 @@
 
 apt-get -y install qt5-default libboost-all-dev
 
-cd ..
-
-mkdir Build
-cd Build
-
-mkdir gcc
-cd gcc
+mkdir gcc\Tools
+cd gcc\Tools
 
 qmake ../../Src/Kernel/Kernel.pro -o Makefile.release -r "CONFIG+=release"
 make -f Makefile.release
@@ -18,6 +13,3 @@ qmake ../../Src/Kernel/Kernel.pro -o Makefile.debug -r "CONFIG+=debug"
 make -f Makefile.debug
 make -f Makefile.debug install
 
-cd ..
-cd ..
-rm -r Build
