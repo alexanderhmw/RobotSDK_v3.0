@@ -226,7 +226,7 @@
       <FuncPreset>Function: get visualization widgets [defined in vars].</FuncPreset>
       <FuncPreset>You need to program here when you need visualization widgets.</FuncPreset>
       <FuncPreset>E.g.</FuncPreset>
-      <FuncPreset>widgets=QList&lt;QWidget *>()&lt;&lt;&amp;(vars->visualization_1)&lt;&lt;&amp;(vars->visualization_2)...;</FuncPreset>
+      <FuncPreset>widgets=QList&lt;QWidget *>()&lt;&lt;(vars->visualization_1)&lt;&lt;(vars->visualization_2)...;</FuncPreset>
       <FuncPreset>*/</FuncPreset>
     </visualizationWidgets>
     <getMonoDrainDataSize Return="void">
