@@ -333,12 +333,14 @@
         <inputParams Type="QVector&lt;void *>">QVector&lt;$(InputParamsType) *> inputparams; copyQVector(inputparams,inputParams);</inputParams>
         <inputData Type="QVector&lt;void *>">QVector&lt;$(InputDataType) *> inputdata; copyQVector(inputdata,inputData);</inputData>
         <outputData Type="void *">$(OutputDataType) * outputdata=($(OutputDataType) *)outputData;</outputData>
-        <outputPortIndex Type="int &amp;">outputPortIndex=$(OutputPortsNumber);</outputPortIndex>
+        <outputPortIndex Type="QList&lt;int> &amp;">outputPortIndex=QList&lt;int>();</outputPortIndex>
       </Parameters>
       <FuncPreset>if(inputdata.size()==0){return 0;}</FuncPreset>
       <FuncPreset>/*======Please Program below======*/</FuncPreset>
       <FuncPreset>/*</FuncPreset>
-      <FuncPreset>Function: process inputdata, store it into outputdata and determine the outputPortIndex.</FuncPreset>
+      <FuncPreset>Step 1: process inputdata, then store it into outputdata.</FuncPreset>
+      <FuncPreset>Step 2 [optional]: determine the outputPortIndex. (if not, outputdata will be sent by all ports)</FuncPreset>
+      <FuncPreset>E.g. outputPortIndex=QList&lt;int>()&lt;&lt;(outportindex1)&lt;&lt;(outportindex2)...</FuncPreset>
       <FuncPreset>*/</FuncPreset>
       <FuncPreset/>
       <FuncPreset>return 1;</FuncPreset>
@@ -369,12 +371,14 @@
         <inputParams Type="QVector&lt;QVector&lt;void *>>">QVector&lt;$(InputParamsType) *> inputparams_$(Index); copyQVector(inputparams_$(Index),inputParams[$(Index)]);</inputParams>
         <inputData Type="QVector&lt;QVector&lt;void *>>">QVector&lt;$(InputDataType) *> inputdata_$(Index); copyQVector(inputdata_$(Index),inputData[$(Index)]);</inputData>
         <outputData Type="void *">$(OutputDataType) * outputdata=($(OutputDataType) *)outputData;</outputData>
-        <outputPortIndex Type="int &amp;">outputPortIndex=$(OutputPortsNumber);</outputPortIndex>
+        <outputPortIndex Type="QList&lt;int> &amp;">outputPortIndex=QList&lt;int>();</outputPortIndex>
       </Parameters>
       <FuncPreset>if(inputdata_$(Index).size()==0){return 0;}</FuncPreset>
       <FuncPreset>/*======Please Program below======*/</FuncPreset>
       <FuncPreset>/*</FuncPreset>
-      <FuncPreset>Function: process inputdata_index, store it into outputdata and determine the outputPortIndex.</FuncPreset>
+      <FuncPreset>Step 1: process inputdata_index, then store it into outputdata.</FuncPreset>
+      <FuncPreset>Step 2 [optional]: determine the outputPortIndex. (if not, outputdata will be sent by all ports)</FuncPreset>
+      <FuncPreset>E.g. outputPortIndex=QList&lt;int>()&lt;&lt;(outportindex1)&lt;&lt;(outportindex2)...</FuncPreset>
       <FuncPreset>*/</FuncPreset>
       <FuncPreset/>
       <FuncPreset>return 1;</FuncPreset>
@@ -385,12 +389,15 @@
         <paramsPtr Type="void *">$(ParamsType) * params=($(ParamsType) *)paramsPtr;</paramsPtr>
         <varsPtr Type="void *">$(VarsType) * vars=($(VarsType) *)varsPtr;</varsPtr>
         <outputData Type="void *">$(OutputDataType) * outputdata=($(OutputDataType) *)outputData;</outputData>
-        <outputPortIndex Type="int &amp;">outputPortIndex=$(OutputPortsNumber);</outputPortIndex>
+        <outputPortIndex Type="QList&lt;int> &amp;">outputPortIndex=QList&lt;int>();</outputPortIndex>
         <timeStamp Type="QTime &amp;">timeStamp=QTime();</timeStamp>
       </Parameters>
       <FuncPreset>/*======Please Program below======*/</FuncPreset>
       <FuncPreset>/*</FuncPreset>
-      <FuncPreset>Function: generate outputdata, determine the outputPortIndex and set the timeStamp for Simulator.</FuncPreset>
+      <FuncPreset>Step 1: fill outputdata.</FuncPreset>
+      <FuncPreset>Step 2 [optional]: determine the outputPortIndex. (if not, outputdata will be sent by all ports)</FuncPreset>
+      <FuncPreset>E.g. outputPortIndex=QList&lt;int>()&lt;&lt;(outportindex1)&lt;&lt;(outportindex2)...</FuncPreset>
+      <FuncPreset>Step 3: set the timeStamp for Simulator.</FuncPreset>
       <FuncPreset>*/</FuncPreset>
       <FuncPreset/>
       <FuncPreset>return 1;</FuncPreset>
@@ -406,8 +413,7 @@
       <FuncPreset>/*</FuncPreset>
       <FuncPreset>Function: get UI widgets [defined in vars].</FuncPreset>
       <FuncPreset>You need to program here when you need UI widgets.</FuncPreset>
-      <FuncPreset>E.g.</FuncPreset>
-      <FuncPreset>widgets=QList&lt;QWidget *>()&lt;&lt;&amp;(vars->UI_1)&lt;&lt;&amp;(vars->UI_2)...;</FuncPreset>
+      <FuncPreset>E.g. widgets=QList&lt;QWidget *>()&lt;&lt;(vars->UI_1)&lt;&lt;(vars->UI_2)...;</FuncPreset>
       <FuncPreset>*/</FuncPreset>
     </UIWidgets>
   </FuncRule>

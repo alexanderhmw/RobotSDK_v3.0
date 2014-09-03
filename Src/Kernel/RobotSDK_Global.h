@@ -39,20 +39,20 @@
 #define DECOFUNC_1(NODECONFIG,func) DECOFUNC_2(NODECONFIG,func)
 #define DECOFUNC_2(NODECONFIG,func) NODECONFIG##_##func
 
-#include<ExModules/Drain/Storage/storage.h>
-#include<Core/Edge/triggerlog.h>
-#include<ExModules/Source/Sensor/sensor.h>
-#include<Core/Edge/triggerview.h>
 #include<ExModules/Drain/Visualization/visualization.h>
-#include<ExModules/Source/UserInput/userinput.h>
-#include<Modules/Drain/drain.h>
-#include<Modules/Processor/processor.h>
-#include<ExModules/Drain/Transmitter/transmitter.h>
-#include<ExModules/Source/Simulator/simulator.h>
-#include<Modules/Source/source.h>
-#include<Modules/SourceDrain/sourcedrain.h>
+#include<ExModules/Source/Sensor/sensor.h>
 #include<Core/Edge/edge.h>
+#include<ExModules/Source/UserInput/userinput.h>
+#include<Modules/SourceDrain/sourcedrain.h>
+#include<Core/Edge/triggerlog.h>
 #include<Core/Node/node.h>
+#include<Modules/Processor/processor.h>
+#include<ExModules/Source/Simulator/simulator.h>
+#include<ExModules/Drain/Storage/storage.h>
+#include<Core/Edge/triggerview.h>
+#include<ExModules/Drain/Transmitter/transmitter.h>
+#include<Modules/Drain/drain.h>
+#include<Modules/Source/source.h>
 
 #include<qglobal.h>
 #include<qlabel.h>

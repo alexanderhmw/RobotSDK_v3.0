@@ -290,7 +290,7 @@
         <Parameters>
           <paramsPtr>void *</paramsPtr>
           <varsPtr>void *</varsPtr>
-          <drainParams>QVector&lt;QVector&lt;void *>></drainParams>
+          <drainParams>QVector&lt;QVector&lt;void *> ></drainParams>
           <drainData>QVector&lt;QVector&lt;void *> ></drainData>
         </Parameters>
       </processMultiDrainData>
@@ -354,7 +354,7 @@
           <inputParams>QVector&lt;void *></inputParams>
           <inputData>QVector&lt;void *></inputData>
           <outputData>void *</outputData>
-          <outputPortIndex>int &amp;</outputPortIndex>
+          <outputPortIndex>QList&lt;int> &amp;</outputPortIndex>
         </Parameters>
       </processMonoInputData>
     </Interface>
@@ -392,10 +392,10 @@
         <Parameters>
           <paramsPtr>void *</paramsPtr>
           <varsPtr>void *</varsPtr>
-          <inputParams>QVector&lt;QVector&lt;void *>></inputParams>
-          <inputData>QVector&lt;QVector&lt;void *>></inputData>
+          <inputParams>QVector&lt;QVector&lt;void *> ></inputParams>
+          <inputData>QVector&lt;QVector&lt;void *> ></inputData>
           <outputData>void *</outputData>
-          <outputPortIndex>int &amp;</outputPortIndex>
+          <outputPortIndex>QList&lt;int> &amp;</outputPortIndex>
         </Parameters>
       </processMultiInputData>
     </Interface>
@@ -435,7 +435,7 @@
           <paramsPtr>void *</paramsPtr>
           <varsPtr>void *</varsPtr>
           <outputData>void *</outputData>
-          <outputPortIndex>int &amp;</outputPortIndex>
+          <outputPortIndex>QList&lt;int> &amp;</outputPortIndex>
           <timeStamp>QTime &amp;</timeStamp>
         </Parameters>
       </generateSourceData>
@@ -476,7 +476,7 @@
           <paramsPtr>void *</paramsPtr>
           <varsPtr>void *</varsPtr>
           <outputData>void *</outputData>
-          <outputPortIndex>int &amp;</outputPortIndex>
+          <outputPortIndex>QList&lt;int> &amp;</outputPortIndex>
           <timeStamp>QTime &amp;</timeStamp>
         </Parameters>
       </generateSourceData>
@@ -550,8 +550,8 @@
         <Parameters>
           <paramsPtr>void *</paramsPtr>
           <varsPtr>void *</varsPtr>
-          <drainParams>QVector&lt;QVector&lt;void *>></drainParams>
-          <drainData>QVector&lt;QVector&lt;void *>></drainData>
+          <drainParams>QVector&lt;QVector&lt;void *> ></drainParams>
+          <drainData>QVector&lt;QVector&lt;void *> ></drainData>
         </Parameters>
       </processMultiDrainData>
     </Interface>

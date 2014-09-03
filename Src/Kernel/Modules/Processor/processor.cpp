@@ -46,10 +46,10 @@ void ProcessorMono::processInputDataSlot()
         QVector<boost::shared_ptr<void> > boostdata=inputports[0]->grabInputData(monodatasize);
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-		int outputportindex;
-		if(processMonoInputData(paramsptr.get(),varsptr.get(),convertBoostData(boostparams),convertBoostData(boostdata),outputdata.get(),outputportindex)&&outputportindex>=0)
+		QList<int> outputportindex;
+		if(processMonoInputData(paramsptr.get(),varsptr.get(),convertBoostData(boostparams),convertBoostData(boostdata),outputdata.get(),outputportindex))
 		{
-			if(outputportindex>=outputports.size())
+			if(outputportindex.size()==0)
 			{
 				int i,n=outputports.size();
 				for(i=0;i<n;i++)
@@ -59,7 +59,14 @@ void ProcessorMono::processInputDataSlot()
 			}
 			else
 			{
-				outputports[outputportindex]->outputData(paramsptr,outputdata);
+				int i,n=outputportindex.size();
+				for(i=0;i<n;i++)
+				{
+					if(outputportindex[i]>=0&&outputportindex[i]<outputports.size())
+					{
+						outputports[outputportindex[i]]->outputData(paramsptr,outputdata);
+					}
+				}
 			}
 			emit processInputDataSignal();
 			nodeTriggerTime(NodeTriggerEnd);
@@ -126,10 +133,10 @@ void ProcessorMulti::processInputDataSlot()
 		}
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-		int outputportindex;
-		if(processMultiInputData(paramsptr.get(),varsptr.get(),inputparams,inputdata,outputdata.get(),outputportindex)&&outputportindex>=0)
+		QList<int> outputportindex;
+		if(processMultiInputData(paramsptr.get(),varsptr.get(),inputparams,inputdata,outputdata.get(),outputportindex))
 		{
-			if(outputportindex>=outputports.size())
+			if(outputportindex.size()==0)
 			{
 				int i,n=outputports.size();
 				for(i=0;i<n;i++)
@@ -139,7 +146,14 @@ void ProcessorMulti::processInputDataSlot()
 			}
 			else
 			{
-				outputports[outputportindex]->outputData(paramsptr,outputdata);
+				int i,n=outputportindex.size();
+				for(i=0;i<n;i++)
+				{
+					if(outputportindex[i]>=0&&outputportindex[i]<outputports.size())
+					{
+						outputports[outputportindex[i]]->outputData(paramsptr,outputdata);
+					}
+				}
 			}
 			emit processInputDataSignal();
 			nodeTriggerTime(NodeTriggerEnd);

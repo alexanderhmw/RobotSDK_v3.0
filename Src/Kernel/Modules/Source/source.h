@@ -93,7 +93,7 @@ protected:
 		- outputDataPtr=boost::shared_ptr<void> (new OutputDataType);
 	*/
 	typedef void (*initializeOutputDataFptr)(void * paramsPtr, void * varsPtr, boost::shared_ptr<void> & outputDataPtr);
-	/*! \typedef bool (*generateSourceDataFptr)(void * paramsPtr, void * varsPtr, void * outputData, int & outputPortIndex, QTime & timeStamp)
+	/*! \typedef bool (*generateSourceDataFptr)(void * paramsPtr, void * varsPtr, void * outputData, QList<int> & outputPortIndex, QTime & timeStamp)
 		\brief [required] Function pointer type for interface function of generating source data.
 		\param [in] paramsPtr The node's parameters(\ref Node::paramsptr).
 		\param [in] varsPtr The node's variables(\ref Node::varsptr).
@@ -102,7 +102,7 @@ protected:
 		\param [out] timeStamp The timestamp. Mainly used in simulator to get the timestamp of one data frame.
 		\return 1 for success and 0 for failure.
 	*/
-	typedef bool (*generateSourceDataFptr)(void * paramsPtr, void * varsPtr, void * outputData, int & outputPortIndex, QTime & timeStamp);
+	typedef bool (*generateSourceDataFptr)(void * paramsPtr, void * varsPtr, void * outputData, QList<int> & outputPortIndex, QTime & timeStamp);
 protected:
 	/*! \var initializeOutputData
 		\brief [private] Interface function of initializing node's output data.

@@ -121,12 +121,12 @@ void Simulator::generateSourceDataSlot()
 		{
 			boost::shared_ptr<void> outputdata;
 			initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-			generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
-			while(!curtime.isNull()&&!starttime.isNull()&&curtime<=starttime)
+			curflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
+			while(curflag&&!curtime.isNull()&&!starttime.isNull()&&curtime<=starttime)
 			{
-				generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
+				curflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
 			}
-			if(curtime.isNull())
+			if(!curflag||curtime.isNull())
 			{
 				emit generateSourceDataErrorSignal();
 				nodeTriggerTime(NodeTriggerError);
@@ -137,14 +137,14 @@ void Simulator::generateSourceDataSlot()
 				curoutputdata=outputdata;
 			}
 			initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-			generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
+			nextflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
 			nextoutputdata=outputdata;
 		}
-		if(nexttime.isNull())
+		if(!nextflag||nexttime.isNull())
 		{			
-			if(curoutputportindex>=0)
+			if(curflag)
 			{
-				if(curoutputportindex>=outputports.size())
+				if(curoutputportindex.size()==0)
 				{
 					int i,n=outputports.size();
 					for(i=0;i<n;i++)
@@ -154,7 +154,14 @@ void Simulator::generateSourceDataSlot()
 				}
 				else
 				{
-					outputports[curoutputportindex]->outputData(paramsptr,curoutputdata);
+					int i,n=curoutputportindex.size();
+					for(i=0;i<n;i++)
+					{
+						if(curoutputportindex[i]>=0&&curoutputportindex[i]<outputports.size())
+						{
+							outputports[curoutputportindex[i]]->outputData(paramsptr,curoutputdata);
+						}
+					}
 				}
 				emit generateSourceDataSignal();
 				nodeTriggerTime(NodeTriggerEnd);
@@ -183,9 +190,9 @@ void Simulator::generateSourceDataSlot()
 				interval=1;
 			}
 			QTimer::singleShot(interval,this,SOURCESLOT);
-			if(curoutputportindex>=0)
+			if(curflag)
 			{
-				if(curoutputportindex>=outputports.size())
+				if(curoutputportindex.size()==0)
 				{
 					int i,n=outputports.size();
 					for(i=0;i<n;i++)
@@ -195,7 +202,14 @@ void Simulator::generateSourceDataSlot()
 				}
 				else
 				{
-					outputports[curoutputportindex]->outputData(paramsptr,curoutputdata);
+					int i,n=curoutputportindex.size();
+					for(i=0;i<n;i++)
+					{
+						if(curoutputportindex[i]>=0&&curoutputportindex[i]<outputports.size())
+						{
+							outputports[curoutputportindex[i]]->outputData(paramsptr,curoutputdata);
+						}
+					}
 				}
 				emit generateSourceDataSignal();
 				nodeTriggerTime(NodeTriggerEnd);
@@ -210,7 +224,7 @@ void Simulator::generateSourceDataSlot()
 			curoutputdata=nextoutputdata;
 			boost::shared_ptr<void> outputdata;
 			initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-			generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
+			nextflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
 			nextoutputdata=outputdata;
 		}
 	}

@@ -65,14 +65,22 @@ protected:
 	/*! \var curoutputportindex
 		\brief The current index of output port.
 	*/
-	int curoutputportindex;
+	QList<int> curoutputportindex;
 	/*! \var nextoutputportindex
 		\brief The index of output port next to current output port index.
 	*/
-	int nextoutputportindex;
+	QList<int> nextoutputportindex;
+	/*! \var curflag
+		\brief The status of current generateSourceData.
+	*/
+	bool curflag;
+	/*! \var nextflag
+		\brief The status of next generateSourceData.
+	*/
+	bool nextflag;
 	/*! \var curoutputdata
 		\brief The current output data will be sent when the simulator is triggered 
-	*/
+	*/	
 	boost::shared_ptr<void> curoutputdata;
 	/*! \var nextoutputdata
 		\brief Next output data will be stored to \ref curoutputdata after the \ref curoutputdata is sent and new data will be loaded. 

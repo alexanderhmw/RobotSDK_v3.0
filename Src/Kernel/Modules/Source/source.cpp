@@ -41,11 +41,11 @@ void Source::generateSourceDataSlot()
 		nodeTriggerTime(NodeTriggerStart);
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-		int outputportindex;
+		QList<int> outputportindex;
 		QTime timestamp;
-		if(generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),outputportindex,timestamp)&&outputportindex>=0)
+		if(generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),outputportindex,timestamp))
 		{
-			if(outputportindex>=outputports.size())
+			if(outputportindex.size()==0)
 			{
 				int i,n=outputports.size();
 				for(i=0;i<n;i++)
@@ -55,7 +55,14 @@ void Source::generateSourceDataSlot()
 			}
 			else
 			{
-				outputports[outputportindex]->outputData(paramsptr,outputdata);
+				int i,n=outputportindex.size();
+				for(i=0;i<n;i++)
+				{
+					if(outputportindex[i]>=0&&outputportindex[i]<outputports.size())
+					{
+						outputports[outputportindex[i]]->outputData(paramsptr,outputdata);
+					}
+				}
 			}
 			emit generateSourceDataSignal();
 			nodeTriggerTime(NodeTriggerEnd);

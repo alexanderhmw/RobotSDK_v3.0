@@ -153,7 +153,7 @@ protected:
 		\param [out] inputDataSize The required mono input data size. (see InputNode::grabInputData(int grabSize))
 	*/
 	typedef void (*getMonoInputDataSizeFptr)(void * paramsPtr, void * varsPtr, int & inputDataSize);
-	/*! \typedef bool (*processMonoInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<void *> inputParams, QVector<void *> inputData, void * outputData, int & outputPortIndex)
+	/*! \typedef bool (*processMonoInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<void *> inputParams, QVector<void *> inputData, void * outputData, QList<int> & outputPortIndex)
 		\brief [required] Function pointer type for interface function of processing mono input data.
 		\param [in] paramsPtr The node's parameters(\ref Node::paramsptr).
 		\param [in] varsPtr The node's variables(\ref Node::varsptr).
@@ -163,7 +163,7 @@ protected:
 		\param [out] outputPortIndex The index of output port to send output data.
 		\return 1 for success and 0 for failure.
 	*/
-	typedef bool (*processMonoInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<void *> inputParams, QVector<void *> inputData, void * outputData, int & outputPortIndex);
+	typedef bool (*processMonoInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<void *> inputParams, QVector<void *> inputData, void * outputData, QList<int> & outputPortIndex);
 protected:
 	/*! \var getMonoInputDataSize
 		\brief [private] Interface function of getting mono input data size.
@@ -230,7 +230,7 @@ protected:
 		\param [out] inputDataSize The required multi input data size. (see InputNode::grabInputData(int grabSize))
 	*/
 	typedef void (*getMultiInputDataSizeFptr)(void * paramsPtr, void * varsPtr, QList<int> & inputDataSize);
-    /*! \typedef bool (*processMultiInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<QVector<void *> > inputParams, QVector<QVector<void *> > inputData, void * outputData, int & outputPortIndex);
+    /*! \typedef bool (*processMultiInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<QVector<void *> > inputParams, QVector<QVector<void *> > inputData, void * outputData, QList<int> & outputPortIndex);
 		\brief [required] Function pointer type for interface function of processing multi input data.
 		\param [in] paramsPtr The node's parameters(\ref Node::paramsptr).
 		\param [in] varsPtr The node's variables(\ref Node::varsptr).
@@ -240,7 +240,7 @@ protected:
 		\param [out] outputPortIndex The index of output port to send output data.
 		\return 1 for success and 0 for failure.
 	*/
-    typedef bool (*processMultiInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<QVector<void *> > inputParams, QVector<QVector<void *> > inputData, void * outputData, int & outputPortIndex);
+    typedef bool (*processMultiInputDataFptr)(void * paramsPtr, void * varsPtr, QVector<QVector<void *> > inputParams, QVector<QVector<void *> > inputData, void * outputData, QList<int> & outputPortIndex);
 protected:
 	/*! \var getMultiInputDataSize
 		\brief [private] Interface function of getting multi input data size.
