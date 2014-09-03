@@ -8,7 +8,7 @@ Configuration::Configuration(QWidget *parent)
     vsversion="Linux";
 #elif defined(Q_OS_WIN)
 #ifdef _MSC_VER
-    vsversion=QInputDialog::getItem(this,QString("Select Compiler Version and Platform"),QString("Compiler Version and Platform"),QStringList()<<"v110_x64"<<"v110_Win32"<<"v100_x64"<<"v100_Win32",-1);
+    vsversion=QInputDialog::getItem(this,QString("Select Compiler Version and Platform"),QString("Compiler Version and Platform"),QStringList()<<"v120_x64"<<"v120_Win32"<<"v110_x64"<<"v110_Win32"<<"v100_x64"<<"v100_Win32"<<"v90_x64"<<"v90_Win32"<<"v80_x64"<<"v80_Win32",-1);
 	if(vsversion.size()==0)
 	{
 		exit(0);
