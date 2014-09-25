@@ -1,5 +1,7 @@
 #include "simulator.h"
 
+#define SAFEWAITING 1000
+
 Simulator::Simulator(QString qstrSharedLibrary, QString qstrNodeClass, QString qstrNodeName, QString qstrConfigName, QTime startTime, double simulateRate, QString qstrFuncEx)
 	: Source(qstrSharedLibrary,QString("Simulator"),qstrNodeClass,qstrNodeName,qstrConfigName,qstrFuncEx)
 {
@@ -40,10 +42,20 @@ void Simulator::syncTimeTrackSlot()
 	Node::openNodeSlot();
 	boost::shared_ptr<void> outputdata;
 	initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-	generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
-	while(!curtime.isNull()&&!starttime.isNull()&&curtime<=starttime)
+	curflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
+	while(curflag&&!curtime.isNull()&&!starttime.isNull()&&curtime<=starttime)
 	{
-		generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
+		curflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),curoutputportindex,curtime);
+	}
+	if(!curflag||curtime.isNull())
+	{
+		emit generateSourceDataErrorSignal();
+		nodeTriggerTime(NodeTriggerError);
+		return;
+	}
+	else
+	{
+		curoutputdata=outputdata;
 	}
 	if(curtime.isNull())
 	{
@@ -94,13 +106,13 @@ void Simulator::startSimulatorSlot()
 	}
 	else if(!starttime.isNull())
 	{
-		initialcurtime=starttime;
+		initialcurtime=starttime.addMSecs(-SAFEWAITING);
 		startcurtime=QTime::currentTime();
-		int interval=int((starttime.msecsTo(curtime))*simulaterate+0.5);
+		int interval=int((initialcurtime.msecsTo(curtime))*simulaterate+0.5);
 		QTimer::singleShot(interval,this,SOURCESLOT);
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
-		generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
+		nextflag=generateSourceData(paramsptr.get(),varsptr.get(),outputdata.get(),nextoutputportindex,nexttime);
 		nextoutputdata=outputdata;
 	}
 }
