@@ -134,6 +134,18 @@ protected:
     */
     QReadWriteLock readwritelock;
 public:
+	/*! \fn int getInputBufferSize()
+        \brief Get the \ref inputbuffersize.
+    */
+	int getInputBufferSize();
+	/*! \fn void lock()
+        \brief Lock inputport for data grabbing.
+    */
+	void lock();
+	/*! \fn void unlock()
+        \brief Unlock inputport.
+    */
+	void unlock();
     /*! \fn QVector<boost::shared_ptr<void> > grabInputParams(int grabSize)
         \brief Grab the input parameters in the size of \a grabSize from InputPort::inputparamsbuffer.
         \param [in] grabSize The size of grabbed input parameters.
@@ -154,7 +166,12 @@ public:
             - Back-end is the oldest grabbed data
     */
     QVector<boost::shared_ptr<void> > grabInputData(int grabSize);
-    /*! \fn clear()
+	/*! \fn void removeInputParamsData(int removeSize)
+		\brief Remove \a removeSize elements in \ref inputparamsbuffer and \ref inputdatabuffer.
+		\params [in] removeSize The size of removed elements.  
+    */
+	void removeInputParamsData(int removeSize);
+    /*! \fn void clear()
         \brief Clear \ref inputparamsbuffer and \ref inputdatabuffer.
     */
     void clear();

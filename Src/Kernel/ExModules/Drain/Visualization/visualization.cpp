@@ -17,6 +17,12 @@ QList<QWidget *> VisualizationMono::getVisualizationWidgets()
 	return widgets;
 }
 
+void VisualizationMono::resetVisualizationSlot()
+{
+	closeNodeSlot();
+	openNodeSlot();
+}
+
 VisualizationMulti::VisualizationMulti(QString qstrSharedLibrary, QString qstrNodeClass, QString qstrNodeName, QString qstrConfigName, QString qstrFuncEx)
 	: DrainMulti(qstrSharedLibrary,QString("VisualizationMulti"),qstrNodeClass,qstrNodeName,qstrConfigName,qstrFuncEx)
 {
@@ -32,4 +38,10 @@ QList<QWidget *> VisualizationMulti::getVisualizationWidgets()
 		this->moveToThread(QApplication::instance()->thread());
 	}
 	return widgets;
+}
+
+void VisualizationMulti::resetVisualizationSlot()
+{
+	closeNodeSlot();
+	openNodeSlot();
 }

@@ -42,8 +42,24 @@ void ProcessorMono::processInputDataSlot()
 		nodeTriggerTime(NodeTriggerStart);		
 		int monodatasize;
 		getMonoInputDataSize(paramsptr.get(),varsptr.get(),monodatasize);
+		inputports[0]->lock();
         QVector<boost::shared_ptr<void> > boostparams=inputports[0]->grabInputParams(monodatasize);
         QVector<boost::shared_ptr<void> > boostdata=inputports[0]->grabInputData(monodatasize);
+		if(monodatasize<0)
+		{
+			if(boostparams.size()!=-monodatasize||boostdata.size()!=-monodatasize)
+			{
+				inputports[0]->unlock();
+				emit processInputDataErrorSignal();
+				nodeTriggerTime(NodeTriggerError);
+				return;
+			}
+			else if(inputports[0]->getInputBufferSize()<=0)
+			{
+				inputports[0]->removeInputParamsData(monodatasize);
+			}
+		}
+		inputports[0]->unlock();
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);
 		QList<int> outputportindex;
@@ -116,20 +132,48 @@ void ProcessorMulti::processInputDataSlot()
 		QList<int> multidatasize;
 		getMultiInputDataSize(paramsptr.get(),varsptr.get(),multidatasize);
 		int m=multidatasize.size();
+		QVector<int> checkports;
 		for(i=0;i<n;i++)
-		{			
+		{
+			inputports[i]->lock();
 			if(i<m)
 			{
 				boostparams[i]=inputports[i]->grabInputParams(multidatasize[i]);
 				boostdata[i]=inputports[i]->grabInputData(multidatasize[i]);
+				if(multidatasize[i]<0)
+				{
+					if(boostparams[i].size()!=-multidatasize[i]||boostdata[i].size()!=-multidatasize[i])
+					{
+						inputports[i]->unlock();
+						emit processInputDataErrorSignal();
+						nodeTriggerTime(NodeTriggerError);
+						return;
+					}
+					else if(inputports[i]->getInputBufferSize()<=0)
+					{
+						checkports.push_back(i);
+					}
+				}
 			}
 			else
 			{
 				boostparams[i]=inputports[i]->grabInputParams(-1);
 				boostdata[i]=inputports[i]->grabInputData(-1);
+				inputports[i]->removeInputParamsData(-1);
 			}
+			inputports[i]->unlock();
 			inputparams[i]=convertBoostData(boostparams[i]);
 			inputdata[i]=convertBoostData(boostdata[i]);
+		}
+		if(checkports.size()>0)
+		{
+			m=checkports.size();
+			for(i=0;i<m;i++)
+			{
+				inputports[checkports[i]]->lock();
+				inputports[checkports[i]]->removeInputParamsData(multidatasize[checkports[i]]);
+				inputports[checkports[i]]->unlock();
+			}
 		}
 		boost::shared_ptr<void> outputdata;
 		initializeOutputData(paramsptr.get(),varsptr.get(),outputdata);

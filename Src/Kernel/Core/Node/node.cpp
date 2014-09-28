@@ -11,14 +11,27 @@ InputPort::~InputPort()
     inputdatabuffer.clear();
 }
 
+int InputPort::getInputBufferSize()
+{
+	return inputbuffersize;
+}
+
+void InputPort::lock()
+{
+	readwritelock.lockForRead();
+}
+
+void InputPort::unlock()
+{
+	readwritelock.unlock();
+}
+
 QVector<boost::shared_ptr<void> > InputPort:: grabInputParams(int grabSize)
 {
-    readwritelock.lockForRead();
     QVector<boost::shared_ptr<void> > result;
     int tmpbuffersize=inputparamsbuffer.size();
     if(tmpbuffersize==0)
     {
-        readwritelock.unlock();
         return result;
     }
     if(grabSize==0)
@@ -43,31 +56,20 @@ QVector<boost::shared_ptr<void> > InputPort:: grabInputParams(int grabSize)
     else
     {
         grabSize=-grabSize;
-        if(grabSize>=tmpbuffersize)
-        {
-            result=QVector<boost::shared_ptr<void> >::fromList(inputparamsbuffer);
-        }
-        else
+        if(grabSize<=tmpbuffersize)
         {
             result=QVector<boost::shared_ptr<void> >::fromList(inputparamsbuffer.mid(tmpbuffersize-grabSize,grabSize));
         }
-        if(inputbuffersize<=0)
-        {
-            inputparamsbuffer=inputparamsbuffer.mid(0,tmpbuffersize-grabSize);
-        }
     }
-    readwritelock.unlock();
     return result;
 }
 
 QVector<boost::shared_ptr<void> > InputPort::grabInputData(int grabSize)
 {
-    readwritelock.lockForRead();
     QVector<boost::shared_ptr<void> > result;
     int tmpbuffersize=inputdatabuffer.size();
     if(tmpbuffersize==0)
     {
-        readwritelock.unlock();
         return result;
     }
     if(grabSize==0)
@@ -92,21 +94,32 @@ QVector<boost::shared_ptr<void> > InputPort::grabInputData(int grabSize)
     else
     {
         grabSize=-grabSize;
-        if(grabSize>=tmpbuffersize)
-        {
-            result=QVector<boost::shared_ptr<void> >::fromList(inputdatabuffer);
-        }
-        else
+        if(grabSize<=tmpbuffersize)
         {
             result=QVector<boost::shared_ptr<void> >::fromList(inputdatabuffer.mid(tmpbuffersize-grabSize,grabSize));
         }
-        if(inputbuffersize<=0)
-        {
-            inputdatabuffer=inputdatabuffer.mid(0,tmpbuffersize-grabSize);
-        }
     }
-    readwritelock.unlock();
     return result;
+}
+
+void InputPort::removeInputParamsData(int removeSize)
+{	
+	if(removeSize<0&&inputbuffersize<=0)
+	{		
+		removeSize=-removeSize;
+		int tmpbuffersize=inputdatabuffer.size();
+		if(removeSize>=tmpbuffersize)
+		{
+			inputparamsbuffer.clear();
+			inputdatabuffer.clear();
+		}
+		else
+		{
+			inputparamsbuffer=inputparamsbuffer.mid(0,tmpbuffersize-removeSize);
+			inputdatabuffer=inputdatabuffer.mid(0,tmpbuffersize-removeSize);
+		}     			
+	}
+	return;
 }
 
 void InputPort::clear()

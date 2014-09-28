@@ -24,10 +24,12 @@
 /*! \class VisualizationMono
 	\brief VisualizationMono visualize mono drain data.
 	\details
-	- Provides 1 interface functions:
+	- Provides 1 interface function:
 		- [private, optional] VisualizationMono::visualizationWidget
 	- Provides a visualization interface
 		- VisualizationMono::getVisualizationWidget()
+	- Provides a slot function:
+		- resetVisualizationSlot()
 */
 class VisualizationMono : public DrainMono
 {
@@ -45,11 +47,16 @@ public:
 	*/
 	VisualizationMono(QString qstrSharedLibrary, QString qstrNodeClass, QString qstrNodeName, QString qstrConfigName, QString qstrFuncEx=QString());
 public:
-	/*! \fn getVisualizationWidgets()
+	/*! \fn QList<QWidget *> getVisualizationWidgets()
 		\brief Get the visualization widgets.
 		\return The visualization widgets
 	*/
 	QList<QWidget *> getVisualizationWidgets();
+public slots:
+	/*! \fn void resetVisualizationSlot()
+		\brief Reset the visualization widgets.
+	*/
+	void resetVisualizationSlot();
 protected:
 	/*! \typedef void (*visualizationWidgetsFptr)(void * paramsPtr, void * varsPtr, QList<QWidget *> & widgets)
 		\brief [optional] Function pointer type for interface function of getting node's visualization widgets.
@@ -71,6 +78,8 @@ protected:
 		- [private, optional] VisualizationMulti::getVisualizationWidget
 	- Provides a visualization interface
 		- VisualizationMulti::visualizationWidget()
+	- Provides a slot function:
+		- resetVisualizationSlot()
 */
 class VisualizationMulti : public DrainMulti
 {
@@ -93,6 +102,11 @@ public:
 		\return The visualization widget
 	*/
 	QList<QWidget *> getVisualizationWidgets();
+public slots:
+	/*! \fn void resetVisualizationSlot()
+		\brief Reset the visualization widgets.
+	*/
+	void resetVisualizationSlot();
 protected:
 	/*! \typedef void (*visualizationWidgetsFptr)(void * paramsPtr, void * varsPtr, QList<QWidget *> & widgets)
 		\brief [optional] Function pointer type for interface function of getting node's visualization widgets.
