@@ -24,7 +24,7 @@
 #define INTERFACEFUNCTIONS "Interface_Functions"
 #define ROBOTSDKGLOBAL "RobotSDK_Global"
 #ifdef Q_OS_LINUX
-    #define ROBOTSDKKERNEL QString("%1/SDK/RobotSDK/Kernel").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKKERNEL QString("%1/SDK/RobotSDK/Kernel/include").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKMODULEDEV QString("%1/SDK/RobotSDK/ModuleDev").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKMODULE QString("%1/SDK/RobotSDK/Module").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKSHAREDLIBRARY QString("%1/SDK/RobotSDK/Module/SharedLibrary").arg(QString(qgetenv("HOME")))

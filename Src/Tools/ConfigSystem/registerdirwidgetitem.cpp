@@ -111,8 +111,7 @@ bool setRegValue(QString regValue, QString data)
             file.write(tmplist[i].toUtf8());
         }
         file.close();
-        system("source ~/etc/profile");
-		_putenv_s(regValue.toUtf8().constData(),data.toUtf8().constData());
+        setenv(regValue.toUtf8().constData(),data.toUtf8().constData(),1);
         return 1;
     }
     else
@@ -159,8 +158,7 @@ bool deleteRegValue(QString regValue)
             file.write(tmplist[i].toUtf8());
         }
         file.close();
-        system("source ~/etc/profile");
-		_putenv_s(regValue.toUtf8().constData(),data.toUtf8().constData());
+        unsetenv(regValue.toUtf8().constData());
         return 1;
     }
     else
@@ -250,17 +248,6 @@ RegisterDirWidgetItem::RegisterDirWidgetItem(QWidget * parent, QString qstrRegis
     {
         connect(ui.RegisterTable,SIGNAL(cellDoubleClicked(int,int)),this,SLOT(processDoubleClickedSlot(int,int)));
     }
-#ifdef Q_OS_LINUX
-    QFile file;
-    file.setFileName(ROBOTSDKLIBSH);
-    if(file.open(QIODevice::WriteOnly|QIODevice::Text))
-    {
-        file.write("/opt/RobotSDK/Module/SharedLibrary");
-        file.close();
-    }
-#elif defined(Q_OS_WIN)
-
-#endif
 }
 
 RegisterDirWidgetItem::~RegisterDirWidgetItem()

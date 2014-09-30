@@ -69,11 +69,11 @@ Configuration::Configuration(QWidget *parent)
 
 	robotsdkdir=new RegisterDirWidget(this,doc,RobotSDK,QStringList()<<"Kernel"<<"ModuleDev"<<"Module"<<"SharedLibrary"<<"Tools",0);
 #ifdef Q_OS_LINUX
-    this->addItem(root,RobotSDK,"Kernel",0,"Kernel","/opt/RobotSDK/Kernel",1);
+    this->addItem(root,RobotSDK,"Kernel",0,"Kernel",QString("%1/SDK/RobotSDK/Kernel").arg(QString(qgetenv("HOME"))),1);
     this->addItem(root,RobotSDK,"ModuleDev",0,"ModuleDev",QString("%1/SDK/RobotSDK/ModuleDev").arg(QString(qgetenv("HOME"))),1);
-    this->addItem(root,RobotSDK,"Module",0,"Module","/opt/RobotSDK/Module/include",1);
-    this->addItem(root,RobotSDK,"SharedLibrary",1,"SharedLibrary","/opt/RobotSDK/Module/SharedLibrary",1);
-    this->addItem(root,RobotSDK,"Tools",1,"Tools","/opt/RobotSDK/Tools",1);
+    this->addItem(root,RobotSDK,"Module",0,"Module",QString("%1/SDK/RobotSDK/Module/include").arg(QString(qgetenv("HOME"))),1);
+    this->addItem(root,RobotSDK,"SharedLibrary",1,"SharedLibrary",QString("%1/SDK/RobotSDK/Module/SharedLibrary").arg(QString(qgetenv("HOME"))),1);
+    this->addItem(root,RobotSDK,"Tools",1,"Tools",QString("%1/SDK/RobotSDK/Tools").arg(QString(qgetenv("HOME"))),1);
 #elif defined(Q_OS_WIN)
     this->addItem(root,RobotSDK,"Kernel",0,"Kernel",QString("%1SDK/RobotSDK/Kernel").arg(sdkdriver));
     this->addItem(root,RobotSDK,"ModuleDev",0,"ModuleDev",QString("%1SDK/RobotSDK/ModuleDev").arg(sdkdriver));

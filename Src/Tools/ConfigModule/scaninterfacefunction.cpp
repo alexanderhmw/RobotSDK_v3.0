@@ -1888,7 +1888,7 @@ void ScanInterfaceFunction::createFiles()
             
 			textstream<<QString("#pragma comment(lib,\"Kernel.lib\")\n\n");
 
-			textstream<<QString("#ifdef _DEBUG\n\n");
+			textstream<<QString("#ifdef QT_DEBUG\n\n");
 
 			textstream<<QString("#else\n\n");
             
@@ -2577,12 +2577,12 @@ void ScanInterfaceFunction::configProject()
     relativepath.remove(QString("%1/").arg(ui.LibraryDir->text()));
     stream<<"CONFIG(debug, debug|release){\n";
     stream<<QString("\tTARGET = %1_Debug\n").arg(target);
-    stream<<"\tunix:LIBS *= /opt/RobotSDK/Kernel/lib/Debug/libKernel.a\n";
+    stream<<"\tunix:LIBS *= $$(HOME)/SDK/RobotSDK/Kernel/lib/Debug/libKernel.a\n";
     stream<<"\twin32:LIBS *= $$(RobotSDK_Kernel)/lib/Debug/Kernel.lib\n";
     stream<<"}\n";
     stream<<"else{\n";
     stream<<QString("\tTARGET = %1\n").arg(target);
-    stream<<"\tunix:LIBS *= /opt/RobotSDK/Kernel/lib/Release/libKernel.a\n";
+    stream<<"\tunix:LIBS *= $$(HOME)/SDK/RobotSDK/Kernel/lib/Release/libKernel.a\n";
     stream<<"\twin32:LIBS *= $$(RobotSDK_Kernel)/lib/Release/Kernel.lib\n";
     stream<<"}\n\n";
 
@@ -2672,12 +2672,12 @@ void ScanInterfaceFunction::configProject()
     stream<<"\tINCLUDEPATH *= \t\\\n";
     stream<<"\t\t.\t\\\n";
     stream<<"\t\t/usr/include\t\\\n";
-    stream<<"\t\t/opt/RobotSDK/Kernel/include\t\\\n";
+    stream<<"\t\t$$(HOME)/SDK/RobotSDK/Kernel/include\t\\\n";
     stream<<"\t\t$$(HOME)/SDK/RobotSDK/ModuleDev\t\\\n";
-    stream<<"\t\t/opt/RobotSDK/Module/include\t\\\n\n";
-	stream<<"\ttarget.path = /opt/RobotSDK/Module/SharedLibrary\n";
+    stream<<"\t\t$$(HOME)/SDK/RobotSDK/Module/include\t\\\n\n";
+	stream<<"\ttarget.path = $$(HOME)/SDK/RobotSDK/Module/SharedLibrary\n";
     stream<<"\tINSTALLS += target\n\n";
-    stream<<"\tINSTALL_PREFIX = /opt/RobotSDK/Module/include\n";
+    stream<<"\tINSTALL_PREFIX = $$(HOME)/SDK/RobotSDK/Module/include\n";
     stream<<"\tINSTALL_HEADERS = $$INSTALLHEADERS\n";
     stream<<"\tinclude(Kernel.pri)\n";
     stream<<"}\n\n";

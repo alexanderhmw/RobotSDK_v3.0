@@ -184,11 +184,23 @@ Node::Node(QString qstrSharedLibrary, QString qstrNodeType, QString qstrNodeClas
 #endif
 
     sharedlibrary.setFileName(qstrSharedLibrary);
+
+    bool loadflag=sharedlibrary.load();
+
+ #ifdef Q_OS_LINUX
+    if(!loadflag)
+    {
+        sharedlibrary.setFileName(QString("%1/SDK/RobotSDK/Module/SharedLibrary/%2").arg(QString(qgetenv("HOME"))).arg(qstrSharedLibrary));
+        loadflag=sharedlibrary.load();
+    }
+#endif
+
     nodetype=qstrNodeType;
     nodeclass=qstrNodeClass;
     nodename=qstrNodeName;
     configname=qstrConfigName;
-    if(sharedlibrary.load())
+
+    if(loadflag)
     {
         LoadCheckFptr(sharedlibrary,getPortsSizeFptr,getPortsSize,nodetype,nodeclass);
         LoadCheckFptr(sharedlibrary,initializeParamsFptr,initializeParams,nodetype,nodeclass);

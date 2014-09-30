@@ -26,7 +26,7 @@ FORMS    += \
 unix{
     DESTDIR = ../../../Build/Tools
 
-    target.path = $$(HOME)/SDK/RobotSDK/Tools
+    target.path = /opt/RobotSDK/Tools
     INSTALLS += target
 }
 
