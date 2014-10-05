@@ -442,12 +442,12 @@ public:
         The inputNodesName=QStringList()<<"Name1"<<"Name2;Name3";
     */
     void setInputNodesName(QList<QString> inputNodesName);
-    /*! \fn void setOutputNodesname(QList<QString> outputNodesName)
+    /*! \fn void setOutputNodesName(QList<QString> outputNodesName)
         \brief Set the node-name of output nodes
         \param [in] outputNodesName The node-name of output nodes.
         The outputNodesName=QStringList()<<"Name1"<<"Name2;Name3";
     */
-    void setOutputNodesname(QList<QString> outputNodesName);
+    void setOutputNodesName(QList<QString> outputNodesName);
     /*! \fn QVector<QString> getInputNodesName()
         \brief Get the name of input nodes.
         \return The name of input nodes.

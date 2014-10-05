@@ -1,5 +1,5 @@
 #!/bin/sh
-apt-get -y install qt5-default libboost-all-dev;
+sudo apt-get -y install qt5-default libboost-all-dev;
 mkdir -p GCC/Tools;cd GCC/Tools;
 qmake -makefile ../../Src/Tools/Tools.pro -r "CONFIG+=release";
 make;

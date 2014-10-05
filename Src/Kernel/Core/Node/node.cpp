@@ -385,7 +385,7 @@ void Node::setInputNodesName(QList<QString> inputNodesName)
     inputnodesname.resize(inputports.size());
 }
 
-void Node::setOutputNodesname(QList<QString> outputNodesName)
+void Node::setOutputNodesName(QList<QString> outputNodesName)
 {
     outputnodesname=QVector<QString>::fromList(outputNodesName);
     outputnodesname.resize(outputports.size());
