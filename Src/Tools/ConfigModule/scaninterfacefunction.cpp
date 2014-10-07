@@ -2033,7 +2033,14 @@ void ScanInterfaceFunction::writeClass(QTextStream & textstream, QString suffix,
 	textstream<<QString("\t\\brief The %3 of %1_%2.\n").arg(nodetypename).arg(nodeclassname).arg(suffix);
 	textstream<<QString("\t\\details **Please add details below**\n\n");
 	textstream<<QString("*/\n");
-	textstream<<QString("class ROBOTSDK_OUTPUT %1_%2_%3 \n").arg(nodetypename).arg(nodeclassname).arg(suffix);
+	if(inherit.size()>0)
+	{
+		textstream<<QString("class ROBOTSDK_OUTPUT %1_%2_%3 : public %4 \n").arg(nodetypename).arg(nodeclassname).arg(suffix).arg(inherit);
+	}
+	else
+	{
+		textstream<<QString("class ROBOTSDK_OUTPUT %1_%2_%3 \n").arg(nodetypename).arg(nodeclassname).arg(suffix);
+	}	
 	textstream<<QString("{\n");
 	textstream<<QString("public:\n");
 	textstream<<QString("\t/*! \\fn %1_%2_%3()\n").arg(nodetypename).arg(nodeclassname).arg(suffix);
