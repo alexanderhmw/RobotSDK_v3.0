@@ -3,6 +3,9 @@
 InputPort::InputPort(int inputBufferSize)
 {
     inputbuffersize=inputBufferSize;
+	paramsgrubcount=0;
+	datagrubcount=0;
+	checkstop=1;
 }
 
 InputPort::~InputPort()
@@ -41,6 +44,14 @@ QVector<boost::shared_ptr<void> > InputPort:: grabInputParams(int grabSize)
         {
             inputparamsbuffer.clear();
         }
+		else if(checkstop)
+		{
+			paramsgrubcount++;
+			if(paramsgrubcount>CHECKSTOP*inputbuffersize)
+			{
+				inputparamsbuffer.clear();
+			}
+		}
     }
     else if(grabSize>0)
     {
@@ -52,6 +63,14 @@ QVector<boost::shared_ptr<void> > InputPort:: grabInputParams(int grabSize)
         {
             result=QVector<boost::shared_ptr<void> >::fromList(inputparamsbuffer.mid(0,grabSize));
         }
+		if(inputbuffersize>0&&checkstop)
+		{
+			paramsgrubcount++;
+			if(paramsgrubcount>CHECKSTOP*inputbuffersize)
+			{
+				inputparamsbuffer.clear();
+			}
+		}
     }
     else
     {
@@ -79,6 +98,14 @@ QVector<boost::shared_ptr<void> > InputPort::grabInputData(int grabSize)
         {
             inputdatabuffer.clear();
         }
+		else if(checkstop)
+		{
+			datagrubcount++;
+			if(datagrubcount>CHECKSTOP*inputbuffersize)
+			{
+				inputdatabuffer.clear();
+			}
+		}
     }
     else if(grabSize>0)
     {
@@ -90,6 +117,14 @@ QVector<boost::shared_ptr<void> > InputPort::grabInputData(int grabSize)
         {
             result=QVector<boost::shared_ptr<void> >::fromList(inputdatabuffer.mid(0,grabSize));
         }
+		if(inputbuffersize>0&&checkstop)
+		{
+			datagrubcount++;
+			if(datagrubcount>CHECKSTOP*inputbuffersize)
+			{
+				inputdatabuffer.clear();
+			}
+		}
     }
     else
     {
@@ -104,7 +139,7 @@ QVector<boost::shared_ptr<void> > InputPort::grabInputData(int grabSize)
 
 void InputPort::removeInputParamsData(int removeSize)
 {	
-	if(removeSize<0&&inputbuffersize<=0)
+	if(removeSize<0)//&&inputbuffersize<=0)
 	{		
 		removeSize=-removeSize;
 		int tmpbuffersize=inputdatabuffer.size();
@@ -128,9 +163,16 @@ void InputPort::clear()
     inputdatabuffer.clear();
 }
 
+void InputPort::setCheckStop(bool flag)
+{
+	checkstop=flag;
+}
+
 void InputPort::inputDataSlot(boost::shared_ptr<void> inputParamsPtr,  boost::shared_ptr<void> inputDataPtr)
 {
     readwritelock.lockForWrite();
+	paramsgrubcount=0;
+	datagrubcount=0;
     inputparamsbuffer.push_front(inputParamsPtr);
     inputdatabuffer.push_front(inputDataPtr);
     int tmpbuffersize=inputdatabuffer.size();

@@ -54,7 +54,7 @@ void ProcessorMono::processInputDataSlot()
 				nodeTriggerTime(NodeTriggerError);
 				return;
 			}
-			else if(inputports[0]->getInputBufferSize()<=0)
+			else// if(inputports[0]->getInputBufferSize()<=0)
 			{
 				inputports[0]->removeInputParamsData(monodatasize);
 			}
@@ -149,7 +149,7 @@ void ProcessorMulti::processInputDataSlot()
 						nodeTriggerTime(NodeTriggerError);
 						return;
 					}
-					else if(inputports[i]->getInputBufferSize()<=0)
+					else// if(inputports[i]->getInputBufferSize()<=0)
 					{
 						checkports.push_back(i);
 					}

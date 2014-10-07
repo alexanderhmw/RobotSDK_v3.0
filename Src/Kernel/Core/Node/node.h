@@ -79,6 +79,11 @@
     else{funcPtr=(funcPtrType) sharedLibrary.resolve(QString("%1_%2_%3").arg(nodeType).arg(nodeClass).arg(#funcPtr).toUtf8().constData());}\
     if(funcPtr==NULL){QMessageBox::information(NULL,QString("Node Interface Function Load Error"), QString("No function '%1_%2_%3_%4' in Shared Library '%5'").arg(nodeType).arg(nodeClass).arg(#funcPtr).arg(funcEx).arg(sharedLibrary.fileName()));exit(0);}
 
+/*! \def CHECKSTOP
+    \brief The stop ratio of grubcount to buffersize
+*/
+#define CHECKSTOP 2
+
 /*! \class InputPort
     \brief Class InputPort is the input port for node class to receive input data.
     \details
@@ -133,6 +138,18 @@ protected:
         \brief A read & write lock for resource sharing between inputport's thread and node's thread.
     */
     QReadWriteLock readwritelock;
+	/*! \var checkstop
+        \brief Flag for checkstop.
+    */
+	bool checkstop;
+	/*! \var paramsgrubcount
+        \brief To count params grubbing for stop.
+    */
+	int paramsgrubcount;
+	/*! \var datagrubcount
+        \brief To count data grubbing for stop.
+    */
+	int datagrubcount;
 public:
 	/*! \fn int getInputBufferSize()
         \brief Get the \ref inputbuffersize.
@@ -175,6 +192,11 @@ public:
         \brief Clear \ref inputparamsbuffer and \ref inputdatabuffer.
     */
     void clear();
+	/*! \fn void setCheckStop(bool flag)
+		\brief Set \ref checkstop
+		\params [in] flag The value of \ref checkstop.  
+    */
+	void setCheckStop(bool flag);
 public slots:
     /*! \fn void inputDataSlot(boost::shared_ptr<void> inputParamsPtr,  boost::shared_ptr<void> inputDataPtr)
         \brief The slot to receive input data signal OutputPort::outputDataSignal(boost::shared_ptr<void> outputParamsPtr, boost::shared_ptr<void> outputDataPtr) from OutputPort, which contains the data and parameters.
