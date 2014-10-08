@@ -13,33 +13,34 @@ Edge::Edge()
     hlayout->addWidget(&timerangeinput);
     hlayout->addWidget(new QLabel("Time Interval (ms)"));
     hlayout->addWidget(&timeintervalinput);
+	hlayout->addWidget(new QLabel("Zoom Ratio"));
+    hlayout->addWidget(&zoomratioinput);
     QPushButton * set=new QPushButton("Set Time Line");
     hlayout->addWidget(set);
-    QPushButton * moveup=new QPushButton("Move Up");
-    hlayout->addWidget(moveup);
-    QPushButton * movedown=new QPushButton("Move Down");
-    hlayout->addWidget(movedown);
 
     layout->addLayout(hlayout);
-    layout->addWidget(&panel);
+
+	QWidget * frame=new QWidget;
+	frame->setLayout(&panel);	
+	QScrollArea * viewarea=new QScrollArea;
+	viewarea->setWidget(frame);
+    layout->addWidget(viewarea);
     this->setLayout(layout);
 
     timerspeed.setText("50");
     timerange=1000;
     timeinterval=100;
+	zoomratio=1.0;
     timerangeinput.setText(QString("%1").arg(timerange));
     timeintervalinput.setText(QString("%1").arg(timeinterval));
-    panel.setSortingEnabled(0);
-    panel.setColumnCount(2);
-    panel.setHorizontalHeaderLabels(QStringList()<<"Trigger Log"<<"Trigger View");
+	zoomratioinput.setText(QString("%1").arg(zoomratio));
 
-    moveup->setEnabled(0);
-    movedown->setEnabled(0);
+
+	panel.addWidget(new QLabel("Trigger Log"),0,0);
+	panel.addWidget(new QLabel("Trigger View"),0,1);
 
     bool flag=1;
     flag&=bool(connect(set,SIGNAL(clicked()),this,SLOT(setTimeLineSlot())));
-    flag&=bool(connect(moveup,SIGNAL(clicked()),this,SLOT(moveUpSlot())));
-    flag&=bool(connect(movedown,SIGNAL(clicked()),this,SLOT(moveDownSlot())));
     flag&=bool(connect(&timer,SIGNAL(timeout()),this,SLOT(drawSlot())));
     flag&=bool(connect(&playpause,SIGNAL(clicked()),this,SLOT(playPauseTimerSlot())));
 }
@@ -157,14 +158,13 @@ void Edge::addNode(Node * node, bool gotoThread, bool needMonitor)
         if(needMonitor)//&&gotoThread)
         {
             TriggerLog * triggerlog=new TriggerLog(this,node,gotoThread);
-            TriggerView * triggerview=new TriggerView(this,node,timerange,timeinterval,gotoThread);
+            TriggerView * triggerview=new TriggerView(this,node,timerange,timeinterval,zoomratio,gotoThread);
             int row=panel.rowCount();
-            panel.insertRow(row);
             //panel.setVerticalHeaderItem(row,new QTableWidgetItem(QString("%1_%2_%3").arg(node->getNodeType()).arg(node->getNodeClass()).arg(node->getNodeName())));
-            panel.setCellWidget(row,0,triggerlog);
-            panel.setCellWidget(row,1,triggerview);
-            panel.resizeColumnsToContents();
-            panel.resizeRowsToContents();
+            panel.addWidget(triggerlog,row,0);
+            panel.addWidget(triggerview,row,1);
+			QWidget * parent=(QWidget *)panel.parent();
+			parent->resize(400+int(timerange*zoomratio+0.5),MONITORSIZE*panel.rowCount());
         }
     }
 }
@@ -178,15 +178,12 @@ void Edge::clear()
     n=panel.rowCount();
     for(i=n-1;i>=0;i--)
     {
-        /*panel.setCellWidget(i,0,NULL);
-        panel.setCellWidget(i,1,NULL);*/
-        TriggerLog * triggerlog=(TriggerLog *)panel.cellWidget(i,0);
-        TriggerView * triggerview=(TriggerView *)panel.cellWidget(i,1);
-        panel.removeCellWidget(i,0);
-        panel.removeCellWidget(i,1);
+		TriggerLog * triggerlog=(TriggerLog *)(panel.itemAtPosition(i,0)->widget());
+        TriggerView * triggerview=(TriggerView *)(panel.itemAtPosition(i,1)->widget());
+		panel.removeWidget(triggerlog);
+		panel.removeWidget(triggerview);
         delete triggerlog;
         delete triggerview;
-        panel.removeRow(i);
     }
 
     emit closeAllNodesSignal();
@@ -210,6 +207,8 @@ void Edge::clear()
         flag&=bool(disconnect(this,SIGNAL(closeAllNodesSignal()),nodes.at(i),SLOT(closeNodeSlot())));
         nodes[i]->deleteLater();
     }
+	QWidget * parent=(QWidget *)panel.parent();
+	parent->resize(400+int(timerange*zoomratio+0.5),MONITORSIZE*panel.rowCount());
 }
 
 bool Edge::connectAll()
@@ -280,55 +279,14 @@ void Edge::setTimeLineSlot()
     int i,n=panel.rowCount();
     timerange=timerangeinput.text().toInt();
     timeinterval=timeintervalinput.text().toInt();
-    for(i=0;i<n;i++)
+	zoomratio=zoomratioinput.text().toDouble();
+    for(i=1;i<n;i++)
     {
-        TriggerView * triggerview=(TriggerView *)(panel.cellWidget(i,1));
-        triggerview->setTimeLine(timerange,timeinterval);
+        TriggerView * triggerview=(TriggerView *)(panel.itemAtPosition(i,1)->widget());
+        triggerview->setTimeLine(timerange,timeinterval,zoomratio);		
     }
-}
-
-void Edge::moveUpSlot()
-{
-    int rowid=panel.currentRow();
-    int columnid=panel.currentColumn();
-    if(rowid>0)
-    {
-        TriggerLog * triggerlog=(TriggerLog *)(panel.cellWidget(rowid,0));
-        TriggerView * triggerview=(TriggerView *)(panel.cellWidget(rowid,1));
-        TriggerLog * uppertriggerlog=(TriggerLog *)(panel.cellWidget(rowid-1,0));
-        TriggerView * uppertriggerview=(TriggerView *)(panel.cellWidget(rowid-1,1));
-        panel.removeCellWidget(rowid,0);
-        panel.removeCellWidget(rowid,1);
-        panel.removeCellWidget(rowid-1,0);
-        panel.removeCellWidget(rowid-1,1);
-        panel.setCellWidget(rowid-1,0,triggerlog);
-        panel.setCellWidget(rowid-1,1,triggerview);
-        panel.setCellWidget(rowid,0,uppertriggerlog);
-        panel.setCellWidget(rowid,1,uppertriggerview);
-        panel.setCurrentCell(rowid-1,columnid);
-    }
-}
-
-void Edge::moveDownSlot()
-{
-    int rowid=panel.currentRow();
-    int columnid=panel.currentColumn();
-    if(rowid<panel.rowCount()-1)
-    {
-        TriggerLog * triggerlog=(TriggerLog *)(panel.cellWidget(rowid,0));
-        TriggerView * triggerview=(TriggerView *)(panel.cellWidget(rowid,1));
-        TriggerLog * lowertriggerlog=(TriggerLog *)(panel.cellWidget(rowid+1,0));
-        TriggerView * lowertriggerview=(TriggerView *)(panel.cellWidget(rowid+1,1));
-        panel.removeCellWidget(rowid,0);
-        panel.removeCellWidget(rowid,1);
-        panel.removeCellWidget(rowid+1,0);
-        panel.removeCellWidget(rowid+1,1);
-        panel.setCellWidget(rowid+1,0,triggerlog);
-        panel.setCellWidget(rowid+1,1,triggerview);
-        panel.setCellWidget(rowid,0,lowertriggerlog);
-        panel.setCellWidget(rowid,1,lowertriggerview);
-        panel.setCurrentCell(rowid+1,columnid);
-    }
+	QWidget * parent=(QWidget *)panel.parent();
+	parent->resize(400+int(timerange*zoomratio+0.5),MONITORSIZE*panel.rowCount());
 }
 
 void Edge::drawSlot()

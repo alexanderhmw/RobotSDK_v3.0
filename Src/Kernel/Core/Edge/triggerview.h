@@ -25,6 +25,7 @@
 #include<Core/Node/node.h>
 
 #define MARGIN 10
+#define MONITORSIZE 150
 
 /*! \struct NodeTriggerPoint
     \brief The struct to save trigger point from node and it's used for painting.
@@ -48,15 +49,16 @@ class TriggerView : public QWidget
 {
     Q_OBJECT
 public:
-    /*! \fn TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, bool gotoThread)
+    /*! \fn TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, double zoomRatio, bool gotoThread)
         \breif The constructor of the TriggerView.
         \param [in] parent The parent widget, it is Edge.
         \param [in] node The node to be monitored.
         \param [in] timeRange The range of the time to be monitored.
         \param [in] timeInterval The interval between vertical grid.
+		\param [in] zoomRatio The zoom ratio.
         \param [in] gotoThread The flag to show whether the node will be moved to sub-thread.
     */
-    TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, bool gotoThread);
+    TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, double zoomRatio, bool gotoThread);
     /*! \fn ~TriggerView()
         \brief The destructor of the TriggerView.
     */
@@ -78,20 +80,24 @@ protected:
         \brief The interal of the vertical grid.
     */
     int timeinterval;
+	/*! \var zoomratio
+        \brief The zoom ratio.
+    */
+    double zoomratio;
 protected:
     /*! \var pulse
         \brief The label to show the image.
     */
-    QLabel pulse;
+    QLabel * pulse;
     /*! \var triggerlist
         \brief The list of NodeTriggerPoint for painting.
     */
     QList<NodeTriggerPoint> triggerlist;
 public:
-    /*! \fn void setTimeLine(int timeRange, int timeInterval)
-        \brief To set monitor's time line \ref timerange and \ref timeinterval.
+    /*! \fn void setTimeLine(int timeRange, int timeInterval, double zoomRatio)
+        \brief To set monitor's time line \ref timerange, \ref timeinterval and \ref zoomratio.
     */
-    void setTimeLine(int timeRange, int timeInterval);
+    void setTimeLine(int timeRange, int timeInterval, double zoomRatio);
 public slots:
     /*! \fn void nodeTriggerTimeSlot(QDateTime curDateTime, Node::NodeTriggerState nodeTriggerState)
         \brief Slot function to receive trigger signal from Node.

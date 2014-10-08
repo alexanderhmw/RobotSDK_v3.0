@@ -1,16 +1,18 @@
 #include "triggerview.h"
 
-TriggerView::TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, bool gotoThread)
+TriggerView::TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, double zoomRatio, bool gotoThread)
     : QWidget(parent)
 {
     backupnode=node;
     timerange=timeRange;
     timeinterval=timeInterval;
+	zoomratio=zoomRatio;
 
     nodetag=QString("%1_%2_%3").arg(node->getNodeType()).arg(node->getNodeClass()).arg(node->getNodeName());
     QVBoxLayout * layout=new QVBoxLayout();
-    layout->addWidget(&pulse);
-    pulse.setFixedWidth(timerange);
+	pulse=new QLabel;
+    layout->addWidget(pulse);
+	pulse->setFixedWidth(int(timerange*zoomratio+0.5)+1);
     this->setLayout(layout);
 
     bool flag=1;
@@ -24,6 +26,30 @@ TriggerView::TriggerView(QWidget *parent, Node * node, int timeRange, int timeIn
         flag&=bool(connect(node,SIGNAL(nodeTriggerTimeSignal(QDateTime, Node::NodeTriggerState)),this,SLOT(nodeTriggerTimeSlot(QDateTime, Node::NodeTriggerState))));
     }
     flag&=bool(connect(parent,SIGNAL(drawSignal(QDateTime)),this,SLOT(drawSlot(QDateTime))));
+
+    int width=int(timerange*zoomratio+0.5)+1;
+    int height=MONITORSIZE;
+    QFontMetrics fm=pulse->fontMetrics();
+
+	int i,n;
+    QImage image(width,height,QImage::Format_ARGB32);
+    image.fill(32);
+    QPainter painter;
+    painter.begin(&image);
+
+    n=timerange/timeinterval;
+    painter.setPen(QColor(0,0,0,128));
+    painter.drawText(0,fm.height(),QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss:zzz"));
+    painter.drawLine(0,fm.height(),width,fm.height());
+    painter.drawLine(0,height-fm.height(),width,height-fm.height());
+    for(i=0;i<=n;i++)
+    {
+        QString timestamp=QString("%1ms").arg(i*(timeinterval));
+		painter.drawLine(i*(int(timeinterval*zoomratio+0.5)),fm.height(),i*(int(timeinterval*zoomratio+0.5)),height-fm.height());
+        painter.drawText(i*(int(timeinterval*zoomratio+0.5))+0.5,height,timestamp);
+    }
+	painter.end();
+    pulse->setPixmap(QPixmap::fromImage(image));
 }
 
 TriggerView::~TriggerView()
@@ -33,11 +59,35 @@ TriggerView::~TriggerView()
     flag&=bool(disconnect(backupnode,SIGNAL(drawSignal(QDateTime)),this,SLOT(drawSlot(QDateTime))));
 }
 
-void TriggerView::setTimeLine(int timeRange, int timeInterval)
+void TriggerView::setTimeLine(int timeRange, int timeInterval, double zoomRatio)
 {
     timerange=timeRange;
     timeinterval=timeInterval;
-    pulse.setFixedWidth(timerange);
+	zoomratio=zoomRatio;
+    pulse->setFixedWidth(int(timerange*zoomratio+0.5)+1);
+	int width=int(timerange*zoomratio+0.5)+1;
+	int height=MONITORSIZE;
+	QFontMetrics fm=pulse->fontMetrics();
+
+	int i,n;
+	QImage image(width,height,QImage::Format_ARGB32);
+	image.fill(32);
+	QPainter painter;
+	painter.begin(&image);
+
+	n=timerange/timeinterval;
+	painter.setPen(QColor(0,0,0,128));
+	painter.drawText(0,fm.height(),QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss:zzz"));
+	painter.drawLine(0,fm.height(),width,fm.height());
+	painter.drawLine(0,height-fm.height(),width,height-fm.height());
+	for(i=0;i<=n;i++)
+	{
+		QString timestamp=QString("%1ms").arg(i*(timeinterval));
+		painter.drawLine(i*(int(timeinterval*zoomratio+0.5)),fm.height(),i*(int(timeinterval*zoomratio+0.5)),height-fm.height());
+		painter.drawText(i*(int(timeinterval*zoomratio+0.5))+0.5,height,timestamp);
+	}
+	painter.end();
+	pulse->setPixmap(QPixmap::fromImage(image));
 }
 
 void TriggerView::nodeTriggerTimeSlot(QDateTime curDateTime, Node::NodeTriggerState nodeTriggerState)
@@ -55,26 +105,32 @@ void TriggerView::nodeTriggerTimeSlot(QDateTime curDateTime, Node::NodeTriggerSt
 
 void TriggerView::drawSlot(QDateTime curDateTime)
 {
-    QRect rect=pulse.geometry();
+    QRect rect=pulse->geometry();
     if(rect.width()==0||timeinterval<=0||timerange<=0)
     {
         return;
     }
     int width=rect.width();
     int height=rect.height();
-    QFontMetrics fm=pulse.fontMetrics();
+    QFontMetrics fm=pulse->fontMetrics();
     QDateTime ancientDateTime=curDateTime.addMSecs(-timerange);
     Node::NodeTriggerState laststate=Node::UnknownSate;
     while(!triggerlist.isEmpty())
     {
-        if(triggerlist.front().datetime>=ancientDateTime)
+		NodeTriggerPoint triggerpoint=triggerlist.front();
+        if(triggerpoint.datetime>=ancientDateTime)
         {
             break;
         }
         else
         {
-            laststate=triggerlist.front().triggerstate;
-            triggerlist.pop_front();
+            laststate=triggerpoint.triggerstate;
+			triggerlist.pop_front();
+			if(!triggerlist.isEmpty()&&triggerlist.front().datetime>ancientDateTime)
+			{
+				triggerlist.push_front(triggerpoint);
+				break;
+			}
         }
     }
     int i,n;
@@ -91,8 +147,8 @@ void TriggerView::drawSlot(QDateTime curDateTime)
     for(i=0;i<=n;i++)
     {
         QString timestamp=QString("%1ms").arg(i*(timeinterval));
-        painter.drawLine(i*timeinterval,fm.height(),i*timeinterval,height-fm.height());
-        painter.drawText(i*timeinterval+0.5,height,timestamp);
+        painter.drawLine(i*(int(timeinterval*zoomratio+0.5)),fm.height(),i*(int(timeinterval*zoomratio+0.5)),height-fm.height());
+        painter.drawText(i*(int(timeinterval*zoomratio+0.5))+0.5,height,timestamp);
     }
 
     QPoint prev;
@@ -120,8 +176,12 @@ void TriggerView::drawSlot(QDateTime curDateTime)
     n=triggerlist.size();
     for(i=0;i<n;i++)
     {
+		if(triggerlist.at(i).datetime<ancientDateTime)
+		{
+			continue;
+		}
         int nx=triggerlist.at(i).datetime.msecsTo(curDateTime);
-        next.setX(nx);
+        next.setX(int(nx*zoomratio+0.5));
         next.setY(prev.y());
         painter.drawLine(prev,next);
         prev.setX(next.x());
@@ -153,6 +213,6 @@ void TriggerView::drawSlot(QDateTime curDateTime)
 
     painter.end();
 
-    pulse.clear();
-    pulse.setPixmap(QPixmap::fromImage(image));
+    pulse->clear();
+    pulse->setPixmap(QPixmap::fromImage(image));
 }

@@ -31,6 +31,8 @@
 //#include<qstring.h>
 #include<qthread.h>
 #include<qtimer.h>
+#include<qscrollarea.h>
+#include<qsplitter.h>
 
 #include<Core/Node/node.h>
 
@@ -101,6 +103,10 @@ protected:
         \brief Input the time range for TriggerView.
     */
     QLineEdit timerangeinput;
+	/*! \var zoomratioinput
+        \brief Input the zoom ratio for TriggerView.
+    */
+	QLineEdit zoomratioinput;
     /*! \var timerange
         \brief The time range to show.
     */
@@ -113,10 +119,14 @@ protected:
         \brief The time interval to show.
     */
     int timeinterval;
-    /*! \var panel
-        \brief Panel to contain all TriggerLog and TriggerView.
+	/*! \var zoomratio
+        \brief The zoom ratio.
     */
-    QTableWidget panel;
+    double zoomratio;
+	/*! \var panel
+        \brief panel to contain \ref loglayout and \ref viewlayout.
+    */
+	QGridLayout panel;
 protected:
     /*! \fn bool connectNodes(Node * inputNode, Node * outputNode)
         \brief Connect two nodes.
@@ -170,14 +180,6 @@ public slots:
         \breif Slot function to set time line appearance.
     */
     void setTimeLineSlot();
-    /*! \fn void moveUpSlot()
-        \brief Move selected item up. (Still has bug)
-    */
-    void moveUpSlot();
-    /*! \fn void moveDownSlot()
-        \brief Move selected item down. (Still has bug)
-    */
-    void moveDownSlot();
     /*! \fn void drawSlot()
         \brief Slot function triggered by \ref timer to draw monitor. (Still has bug)
     */
