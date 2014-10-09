@@ -16,7 +16,9 @@ set ToolPath=%RobotSDK_Tools:/=\%
 if not exist %ToolPath%\NUL mkdir %ToolPath%
 
 xcopy .\Build\Tools\*.exe %ToolPath% /s /e /y
+xcopy .\Build\Tools\*.pri %ToolPath% /s /e /y
 if not exist %ToolPath%\*.xml xcopy .\Build\Tools\* %ToolPath% /s /e /y
+
 
 set KernelPath=%RobotSDK_Kernel:/=\%
 
