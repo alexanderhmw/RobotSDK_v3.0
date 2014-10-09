@@ -201,40 +201,25 @@ void OutputPort::outputData(boost::shared_ptr<void> outputParamsPtr, boost::shar
 
 Node::Node(QString qstrSharedLibrary, QString qstrNodeType, QString qstrNodeClass, QString qstrNodeName, QString qstrConfigName)
 { 
-#ifdef Q_OS_LINUX
-    #ifdef QT_DEBUG
-        qstrSharedLibrary=qstrSharedLibrary+QString("_Debug");
-    #else
-        qstrSharedLibrary=qstrSharedLibrary;
-    #endif
-#elif defined(Q_OS_WIN)
-    #ifdef _MSC_VER
-		qstrSharedLibrary=qstrSharedLibrary+QString("_v%1").arg(int(_MSC_VER/10-60));
-    #endif
+    QString sharedlibraryname=qstrSharedLibrary;
 
-    #ifdef _WIN64
-        qstrSharedLibrary=qstrSharedLibrary+QString("_x64");
-    #elif _WIN32
-        qstrSharedLibrary=qstrSharedLibrary+QString("_Win32");
-    #endif
-
-    #ifdef _DEBUG
-        qstrSharedLibrary=qstrSharedLibrary+QString("_Debug");
-    #else
-        qstrSharedLibrary=qstrSharedLibrary+QString("_Release");
-    #endif
+#ifdef _DEBUG
+    sharedlibraryname=sharedlibraryname+QString("_Debug");
+#else
+    sharedlibraryname=sharedlibraryname+QString("_Release");
 #endif
 
-    sharedlibrary.setFileName(qstrSharedLibrary);
-
+    sharedlibrary.setFileName(sharedlibraryname);
     bool loadflag=sharedlibrary.load();
 
  #ifdef Q_OS_LINUX
     if(!loadflag)
     {
-        sharedlibrary.setFileName(QString("%1/SDK/RobotSDK/Module/SharedLibrary/%2").arg(QString(qgetenv("HOME"))).arg(qstrSharedLibrary));
+        sharedlibrary.setFileName(QString("%1/SDK/RobotSDK/Module/SharedLibrary/%2").arg(QString(qgetenv("HOME"))).arg(sharedlibraryname));
         loadflag=sharedlibrary.load();
     }
+#elif defined(Q_OS_WIN)
+
 #endif
 
     nodetype=qstrNodeType;

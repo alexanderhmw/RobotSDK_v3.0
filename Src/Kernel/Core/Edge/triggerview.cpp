@@ -126,7 +126,7 @@ void TriggerView::drawSlot(QDateTime curDateTime)
         {
             laststate=triggerpoint.triggerstate;
 			triggerlist.pop_front();
-			if(!triggerlist.isEmpty()&&triggerlist.front().datetime>ancientDateTime)
+            if(triggerlist.isEmpty()||triggerlist.front().datetime>ancientDateTime)
 			{
 				triggerlist.push_front(triggerpoint);
 				break;

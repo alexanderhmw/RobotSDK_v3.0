@@ -28,11 +28,13 @@
     #define ROBOTSDKMODULEDEV QString("%1/SDK/RobotSDK/ModuleDev").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKMODULE QString("%1/SDK/RobotSDK/Module").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKSHAREDLIBRARY QString("%1/SDK/RobotSDK/Module/SharedLibrary").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKTOOLS QString("%1/SDK/RobotSDK/Tools").arg(QString(qgetenv("HOME")))
 #elif defined(Q_OS_WIN)
-    #define ROBOTSDKKERNEL "RobotSDK_Kernel"
-    #define ROBOTSDKMODULEDEV "RobotSDK_ModuleDev"
-    #define ROBOTSDKMODULE "RobotSDK_Module"
-    #define ROBOTSDKSHAREDLIBRARY "RobotSDK_SharedLibrary"
+    #define ROBOTSDKKERNEL getenv("RobotSDK_Kernel")
+    #define ROBOTSDKMODULEDEV getenv("RobotSDK_ModuleDev")
+    #define ROBOTSDKMODULE getenv("RobotSDK_Module")
+    #define ROBOTSDKSHAREDLIBRARY getenv("RobotSDK_SharedLibrary")
+    #define ROBOTSDKTOOLS getenv("RobotSDK_Tools")
 #endif
 #define CREATERULE "CreateRule"
 #define EDITFOLDER "Edit"
@@ -99,8 +101,6 @@ public slots:
 	void clearExFuncsSlot();
 	void browseOutputDirSlot();
 	void createLibraryFilesSlot();
-    void browseNewOutputDirSlot();
-    void createNewLibraryFilesSlot();
 protected:
 	QDomDocument * doc;
 	QDomElement root;
@@ -150,7 +150,8 @@ protected:
 	void writePrivExFuncHeader(QTextStream & textstream);
 	void writePrivExFuncCpp(QTextStream & textstream);
 	void replaceText(QString & text);
-	void configProject();
+    void configQtProject();
+    void configVSProject();
 	void setText(QDomDocument * tmpdoc, QDomElement & tmproot, QString tag, QString text);
 };
 

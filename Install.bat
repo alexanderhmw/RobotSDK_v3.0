@@ -32,5 +32,3 @@ cd /D %TMPCURPATH%
 pause
 
 @echo on
-
-exit

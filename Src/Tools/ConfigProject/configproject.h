@@ -13,6 +13,19 @@
 #include<qmessagebox.h>
 #include<qdatetime.h>
 
+#ifdef Q_OS_LINUX
+    #define ROBOTSDKKERNEL QString("%1/SDK/RobotSDK/Kernel").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKMODULEDEV QString("%1/SDK/RobotSDK/ModuleDev").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKMODULE QString("%1/SDK/RobotSDK/Module").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKSHAREDLIBRARY QString("%1/SDK/RobotSDK/Module/SharedLibrary").arg(QString(qgetenv("HOME")))
+    #define ROBOTSDKTOOLS QString("%1/SDK/RobotSDK/Tools").arg(QString(qgetenv("HOME")))
+#elif defined(Q_OS_WIN)
+    #define ROBOTSDKKERNEL "RobotSDK_Kernel"
+    #define ROBOTSDKMODULEDEV "RobotSDK_ModuleDev"
+    #define ROBOTSDKMODULE "RobotSDK_Module"
+    #define ROBOTSDKSHAREDLIBRARY "RobotSDK_SharedLibrary"
+#endif
+
 class ConfigProject : public QMainWindow
 {
 	Q_OBJECT
@@ -26,9 +39,6 @@ protected:
 	QStringList vversion;
 	QStringList formatversion;
 	QStringList vsversion;
-	QStringList qtex32;
-	QStringList qtex64;
-	QStringList qt5version;
 public slots:
 	void browseSlot();
 	void configSlot();

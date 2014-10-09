@@ -23,11 +23,19 @@ HEADERS  += \
 FORMS    += \
     scaninterfacefunction.ui
 
+OTHER_FILES += \
+    RobotSDK_Main.pri \
+    RobotSDK_Install.pri
+
 unix{
     DESTDIR = ../../../Build/Tools
 
     target.path = $$(HOME)/SDK/RobotSDK/Tools
     INSTALLS += target
+
+    PUBLISHFILES.path = $$(HOME)/SDK/RobotSDK/Tools
+    PUBLISHFILES.files = $$OTHER_FILES
+    INSTALLS += PUBLISHFILES
 }
 
 win32{

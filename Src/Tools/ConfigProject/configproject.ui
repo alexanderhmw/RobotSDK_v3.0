@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>74</height>
+    <width>469</width>
+    <height>92</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
       <item>
        <widget class="QRadioButton" name="Application">
         <property name="text">
-         <string>Application</string>
+         <string>APP</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -64,14 +64,7 @@
       <item>
        <widget class="QRadioButton" name="Library">
         <property name="text">
-         <string>Library</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="Kernel">
-        <property name="text">
-         <string>Kernel</string>
+         <string>MOD</string>
         </property>
        </widget>
       </item>
@@ -104,8 +97,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="configproject.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

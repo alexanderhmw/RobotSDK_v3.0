@@ -24,6 +24,7 @@ if exist ..\..\Build\Tools\ConfigSystem.exe goto ConfigSystem
 
 qmake -tp vc -r ../../Src/Tools/Tools.pro "CONFIG+=build_all"
 devenv Tools.sln /build Release
+xcopy ..\..\Src\Tools\ConfigModule\*.pri ..\..\Build\Tools\ /s /e /y
 
 :ConfigSystem
 echo Start ConfigSystem.exe
@@ -36,8 +37,4 @@ echo Tools Building Completed!
 
 cd /D %TMPCURPATH%
 
-pause
-
 @echo on
-
-exit

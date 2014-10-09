@@ -4,8 +4,9 @@ unix{
 SUBDIRS += \
     ConfigSystem \
     ConfigModule \
-#   ConfigProject \
-#   ConfigApplication
+    ConfigProject \
+#   ConfigApplication \
+#   Publish
 }
 
 win32{
@@ -13,5 +14,7 @@ SUBDIRS += \
     ConfigSystem \
     ConfigModule \
     ConfigProject \
-#   ConfigApplication
+#   ConfigApplication \
+#   Publish
 }
+

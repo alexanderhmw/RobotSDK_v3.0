@@ -186,11 +186,7 @@ ScanInterfaceFunction::ScanInterfaceFunction(QWidget *parent)
 {
 	ui.setupUi(this);
 
-#ifdef Q_OS_LINUX
     QString RobotSDK_Kernel=ROBOTSDKKERNEL;
-#elif defined(Q_OS_WIN)
-	QString RobotSDK_Kernel(getenv(ROBOTSDKKERNEL));
-#endif
 	if(RobotSDK_Kernel.size()==0)
 	{
 		QMessageBox::information(this,"Error",QString("Environment variable %1 does not exist. Please run Configuration first.").arg(ROBOTSDKKERNEL));
@@ -198,11 +194,7 @@ ScanInterfaceFunction::ScanInterfaceFunction(QWidget *parent)
 	}
 	ui.KernelDir->setText(QString("%1/include").arg(RobotSDK_Kernel));
 
-#ifdef Q_OS_LINUX
     QString RobotSDK_Moduledev=ROBOTSDKMODULEDEV;
-#elif defined(Q_OS_WIN)
-    QString RobotSDK_Moduledev(getenv(ROBOTSDKMODULEDEV));
-#endif
     if(RobotSDK_Moduledev.size()==0)
 	{
         QMessageBox::information(this,"Error",QString("Environment variable %1 does not exist. Please run Configuration first.").arg(ROBOTSDKMODULEDEV));
@@ -234,14 +226,8 @@ ScanInterfaceFunction::ScanInterfaceFunction(QWidget *parent)
 	flag&=bool(connect(ui.ClearExFuncs,SIGNAL(clicked()),this,SLOT(clearExFuncsSlot())));
 	flag&=bool(connect(ui.BrowseOutputDir,SIGNAL(clicked()),this,SLOT(browseOutputDirSlot())));
 	flag&=bool(connect(ui.Create,SIGNAL(clicked()),this,SLOT(createLibraryFilesSlot())));
-    flag&=bool(connect(ui.BrowseNewOutputDir,SIGNAL(clicked()),this,SLOT(browseNewOutputDirSlot())));
-    flag&=bool(connect(ui.CreateNew,SIGNAL(clicked()),this,SLOT(createNewLibraryFilesSlot())));
 	
-#ifdef Q_OS_WIN
-	ui.NewOutputDir->setEnabled(0);
-	ui.BrowseNewOutputDir->setEnabled(0);
-	ui.CreateNew->setEnabled(0);
-#endif
+    ui.OutputLabel->setText("Choose Output Project");
 
 	doc=new QDomDocument(INTERFACEFUNCTIONS);
     QString filename=QString("%1/%2.xml").arg(ui.KernelDir->text()).arg(INTERFACEFUNCTIONS);
@@ -898,6 +884,7 @@ void ScanInterfaceFunction::deleteInputDataParamsHeadersSlot()
 void ScanInterfaceFunction::clearInputDataParamsHeadersSlot()
 {
     ui.InputDataheadersList->clear();
+    ui.InputDataheadersList->setRowCount(0);
 }
 
 void ScanInterfaceFunction::addInputPortsSizeSlot()
@@ -926,6 +913,7 @@ void ScanInterfaceFunction::deleteInputPortsSizeSlot()
 void ScanInterfaceFunction::clearInputPortsSizeSlot()
 {
     ui.InputPortsSize->clear();
+    ui.InputDataheadersList->setRowCount(0);
 }
 
 void ScanInterfaceFunction::processDoubleClickInputParamsDataSlot(int row, int column)
@@ -1168,17 +1156,17 @@ void ScanInterfaceFunction::clearExFuncsSlot()
 
 void ScanInterfaceFunction::browseOutputDirSlot()
 {
-#ifdef Q_OS_LINUX
-    QString vcxproj=QFileDialog::getOpenFileName(this,"Output Qt Project",ui.LibraryDir->text(),QString("QtProject (*.pro)"));
-#elif defined(Q_OS_WIN)
-	QString vcxproj=QFileDialog::getOpenFileName(this,"Output VC Project",ui.LibraryDir->text(),QString("VCProject (*.vcxproj)"));
-#endif
+    QString vcxproj=QFileDialog::getOpenFileName(this,"Output VC Project",ui.LibraryDir->text(),QString("Project File (*.vcxproj *.pro)"));
 	if(vcxproj.size()>0)
 	{
 		if(vcxproj.startsWith(ui.LibraryDir->text()))
 		{
 			ui.OutputDir->setText(vcxproj);
 		}
+        else
+        {
+            QMessageBox::information(this,"Error","You can only output to the project in ModuleDev folder!");
+        }
 	}
 }
 
@@ -1188,33 +1176,6 @@ void ScanInterfaceFunction::createLibraryFilesSlot()
 	{
 		QMessageBox::information(this,"Create Shared Library Files","Finish Creating");
 	}
-}
-
-void ScanInterfaceFunction::browseNewOutputDirSlot()
-{
-#ifdef Q_OS_LINUX
-    QString vcxproj=QFileDialog::getSaveFileName(this,"Output Qt Project",ui.LibraryDir->text(),QString("QtProject (*.pro)"));
-#elif defined(Q_OS_WIN)
-    QString vcxproj=QFileDialog::getSaveFileName(this,"Output VC Project",ui.LibraryDir->text(),QString("VCProject (*.vcxproj)"));
-#endif
-    if(vcxproj.size()>0)
-    {
-        if(vcxproj.startsWith(ui.LibraryDir->text()))
-        {
-            ui.NewOutputDir->setText(vcxproj);
-        }
-    }
-}
-
-void ScanInterfaceFunction::createNewLibraryFilesSlot()
-{
-    QString tmp=ui.OutputDir->text();
-    ui.OutputDir->setText(ui.NewOutputDir->text());
-    if(createRule())
-    {
-        QMessageBox::information(this,"Create Shared Library Files","Finish Creating");
-    }
-    ui.OutputDir->setText(tmp);
 }
 
 void ScanInterfaceFunction::scan(QString directory)
@@ -1243,11 +1204,7 @@ void ScanInterfaceFunction::scan(QString directory)
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			QTextStream textstream(&file);
 			QString relativefilepath=filename;
-        #ifdef Q_OS_LINUX
             relativefilepath.remove(QString("%1/").arg(QString("%1/include").arg(ROBOTSDKKERNEL)));
-        #elif defined(Q_OS_WIN)
-			relativefilepath.remove(QString("%1/").arg(QString("%1/include").arg(getenv(ROBOTSDKKERNEL))));
-        #endif
 			while(classnode.scan(textstream,relativefilepath))
 			{
 				classnodes.push_back(classnode);
@@ -1420,7 +1377,7 @@ void ScanInterfaceFunction::storeRule()
     textstream<<QString("\t- If defined RobotSDK_ModuleDev in the project, output type=Q_DECL_EXPORT which is for shared library.\n");
 	textstream<<QString("*/\n");
     textstream<<"#ifdef RobotSDK_ModuleDev\n";
-	textstream<<"#define ROBOTSDK_OUTPUT Q_DECL_EXPORT\n";
+    textstream<<"#define ROBOTSDK_OUTPU#ifdef Q_OS_LINUXT Q_DECL_EXPORT\n";
 	textstream<<"#else\n";
 	textstream<<"#define ROBOTSDK_OUTPUT Q_DECL_IMPORT\n";
 	textstream<<"#endif\n\n";
@@ -1505,13 +1462,15 @@ bool ScanInterfaceFunction::createRule()
 	}
 
 	createFiles();
-#ifdef Q_OS_LINUX
-    configProject();
-#elif defined(Q_OS_WIN)
-#ifdef _MSC_VER
-	configProject();
-#endif
-#endif
+    QString projname=ui.OutputDir->text();
+    if(projname.endsWith(".pro"))
+    {
+        configQtProject();
+    }
+    else if(projname.endsWith(".vcxproj"))
+    {
+        configVSProject();
+    }
 	return 1;
 }
 
@@ -2444,9 +2403,7 @@ void ScanInterfaceFunction::replaceText(QString & text)
 	text.replace("$(OutputPortsNumber)",QString("%1_%2_OUTPUTPORTSNUMBER").arg(nodetypename).arg(nodeclassname));
 }
 
-#ifdef Q_OS_LINUX
-
-void ScanInterfaceFunction::configProject()
+void ScanInterfaceFunction::configQtProject()
 {
     QStringList headerlist;
     QStringList cpplist;
@@ -2472,18 +2429,53 @@ void ScanInterfaceFunction::configProject()
         cpplist<<QString("%3/%1_%2_PrivExFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(editpath);
     }
 
+    QFile file;
+    QTextStream stream;
+    QString textcontent;
     QString filename=outputvcxproj;
-    QFile file(filename);
+    QFileInfo fileinfo(filename);
+
+    file.setFileName(filename);
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        return;
+    }
+    textcontent=file.readAll();
+    file.close();
+    if(textcontent.contains("TEMPLATE = subdirs"))
+    {
+        QMessageBox::information(this,"Error","This is a subdirs project");
+        return;
+    }
+    if(!textcontent.contains(QString("PROJNAME = %1").arg(fileinfo.baseName())))
+    {
+        textcontent=textcontent+QString("\nPROJNAME = %1").arg(fileinfo.baseName());
+    }
+    if(!textcontent.contains("INSTALLTYPE = MOD"))
+    {
+        textcontent=textcontent+QString("\nINSTALLTYPE = MOD");
+    }
+    if(textcontent.contains("INSTALLTYPE = APP"))
+    {
+        textcontent.remove(QString("\nINSTALLTYPE = APP"));
+    }
+    if(textcontent.contains("INSTALLTYPE = SDK"))
+    {
+        textcontent.remove(QString("\nINSTALLTYPE = SDK"));
+    }
+    if(!textcontent.contains("include(RobotSDK_Main.pri)"))
+    {
+        textcontent=textcontent+QString("\ninclude(RobotSDK_Main.pri)");
+    }
+    file.open(QIODevice::WriteOnly|QIODevice::Text);
+    stream.setDevice(&file);
+    stream<<textcontent;
+    file.close();
+
+    QString prifile=QString("%1/%2.pri").arg(fileinfo.absolutePath()).arg(fileinfo.baseName());
+    file.setFileName(prifile);
     QString sources;
     QString headers;
-    QString otherfiles;
-    QString includepath;
-    QString unixlibs;
-    QString win32libs;
-    QString forms;
-    QString resources;
-    QString installheaders;
-    QString defines;
     if(file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
         while(!file.atEnd())
@@ -2503,9 +2495,9 @@ void ScanInterfaceFunction::configProject()
                 int i,n=cpplist.size();
                 for(i=0;i<n;i++)
                 {
-                    if(!sources.contains(QString("\\\n\t")+cpplist.at(i)+QString("\t")))
+                    if(!sources.contains(QString("\\\n\t./")+cpplist.at(i)+QString("\t")))
                     {
-                        sources=sources+QString("\\\n\t")+cpplist.at(i)+QString("\t");
+                        sources=sources+QString("\\\n\t./")+cpplist.at(i)+QString("\t");
                     }
                 }
             }
@@ -2515,51 +2507,11 @@ void ScanInterfaceFunction::configProject()
                 int i,n=headerlist.size();
                 for(i=0;i<n;i++)
                 {
-                    if(!headers.contains(QString("\\\n\t")+headerlist.at(i)+QString("\t")))
+                    if(!headers.contains(QString("\\\n\t./")+headerlist.at(i)+QString("\t")))
                     {
-                        headers=headers+QString("\\\n\t")+headerlist.at(i)+QString("\t");
+                        headers=headers+QString("\\\n\t./")+headerlist.at(i)+QString("\t");
                     }
                 }
-            }
-            else if(tmpline.startsWith("OTHER_FILES +="))
-            {
-                otherfiles=tmpline;
-            }
-            else if(tmpline.startsWith("INCLUDEPATH +="))
-            {
-                includepath=tmpline;
-            }
-            else if(tmpline.startsWith("unix:LIBS +="))
-            {
-                unixlibs=tmpline;
-            }
-            else if(tmpline.startsWith("win32:LIBS +="))
-            {
-                win32libs=tmpline;
-            }
-            else if(tmpline.startsWith("FORMS +="))
-            {
-                forms=tmpline;
-            }
-            else if(tmpline.startsWith("RESOURCES +="))
-            {
-                resources=tmpline;
-            }
-            else if(tmpline.startsWith("INSTALLHEADERS +="))
-            {
-                installheaders=tmpline;
-                int i,n=installheaderslist.size();
-                for(i=0;i<n;i++)
-                {
-                    if(!installheaders.contains(QString("\\\n\t")+installheaderslist.at(i)+QString("\t")))
-                    {
-                        installheaders=installheaders+QString("\\\n\t")+installheaderslist.at(i)+QString("\t");
-                    }
-                }
-            }
-            else if(tmpline.startsWith("DEFINES +="))
-            {
-                defines=tmpline;
             }
         }
         file.close();
@@ -2568,34 +2520,13 @@ void ScanInterfaceFunction::configProject()
     {
         return;
     }
-    QTextStream stream(&file);
+    stream.setDevice(&file);
     stream<<"#-------------------------------------------------\n";
     stream<<"#\n";
     stream<<QString("# Project created by QtCreator %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss"));
     stream<<"#\n";
     stream<<"#-------------------------------------------------\n\n";
 
-    stream<<"QT += widgets network opengl xml\n\n";
-    stream<<"CONFIG += shared qt\n";
-    stream<<"TEMPLATE = lib\n";
-    QString target=filename.mid(filename.lastIndexOf("/")+1);
-    target.truncate(target.lastIndexOf(".pro"));
-    QString relativepath=outputdir;
-    relativepath.remove(QString("%1/").arg(ui.LibraryDir->text()));
-    stream<<"CONFIG(debug, debug|release){\n";
-    stream<<QString("\tTARGET = %1_Debug\n").arg(target);
-    stream<<"\tunix:LIBS *= $$(HOME)/SDK/RobotSDK/Kernel/lib/Debug/libKernel.a\n";
-    stream<<"\twin32:LIBS *= $$(RobotSDK_Kernel)/lib/Debug/Kernel.lib\n";
-    stream<<"}\n";
-    stream<<"else{\n";
-    stream<<QString("\tTARGET = %1\n").arg(target);
-    stream<<"\tunix:LIBS *= $$(HOME)/SDK/RobotSDK/Kernel/lib/Release/libKernel.a\n";
-    stream<<"\twin32:LIBS *= $$(RobotSDK_Kernel)/lib/Release/Kernel.lib\n";
-    stream<<"}\n\n";
-
-    stream<<"DEFINES *= RobotSDK_ModuleDev\n";
-    stream<<"unix:DESTDIR = $$(HOME)/SDK/RobotSDK/ModuleDev/Build/SharedLibrary\n";
-	stream<<"win32:DESTDIR = $$(RobotSDK_SharedLibrary)\n\n";
     if(sources.size()>0)
     {
         stream<<sources<<"\n\n";
@@ -2606,9 +2537,9 @@ void ScanInterfaceFunction::configProject()
         int i,n=cpplist.size();
         for(i=0;i<n;i++)
         {
-            if(!sources.contains(QString("\\\n\t")+cpplist.at(i)+QString("\t")))
+            if(!sources.contains(QString("\\\n\t./")+cpplist.at(i)+QString("\t")))
             {
-                sources=sources+QString("\\\n\t")+cpplist.at(i)+QString("\t");
+                sources=sources+QString("\\\n\t./")+cpplist.at(i)+QString("\t");
             }
         }
         stream<<sources<<"\n\n";
@@ -2623,100 +2554,44 @@ void ScanInterfaceFunction::configProject()
         int i,n=headerlist.size();
         for(i=0;i<n;i++)
         {
-            if(!headers.contains(QString("\\\n\t")+headerlist.at(i)+QString("\t")))
+            if(!headers.contains(QString("\\\n\t./")+headerlist.at(i)+QString("\t")))
             {
-                headers=headers+QString("\\\n\t")+headerlist.at(i)+QString("\t");
+                headers=headers+QString("\\\n\t./")+headerlist.at(i)+QString("\t");
             }
         }
         stream<<headers<<"\n\n";
     }
-    if(otherfiles.size()>0)
-    {
-        stream<<otherfiles<<"\n\n";
-    }
-    if(includepath.size()>0)
-    {
-        stream<<includepath<<"\n\n";
-    }
-    if(unixlibs.size()>0)
-    {
-        stream<<unixlibs<<"\n\n";
-    }
-    if(win32libs.size()>0)
-    {
-        stream<<win32libs<<"\n\n";
-    }
-    if(forms.size()>0)
-    {
-        stream<<forms<<"\n\n";
-    }
-    if(resources.size()>0)
-    {
-        stream<<resources<<"\n\n";
-    }
-    if(installheaders.size()>0)
-    {
-        stream<<installheaders<<"\n\n";
-    }
-    else
-    {
-        installheaders="INSTALLHEADERS += ";
-        int i,n=installheaderslist.size();
-        for(i=0;i<n;i++)
-        {
-            if(!installheaders.contains(QString("\\\n\t")+installheaderslist.at(i)+QString("\t")))
-            {
-                installheaders=installheaders+QString("\\\n\t")+installheaderslist.at(i)+QString("\t");
-            }
-        }
-        stream<<installheaders<<"\n\n";
-    }
-    if(defines.size()>0)
-    {
-        stream<<defines<<"\n\n";
-    }
-    stream<<"unix{\n";
-    stream<<"\tINCLUDEPATH *= \t\\\n";
-    stream<<"\t\t.\t\\\n";
-    stream<<"\t\t/usr/include\t\\\n";
-    stream<<"\t\t$$(HOME)/SDK/RobotSDK/Kernel/include\t\\\n";
-    stream<<"\t\t$$(HOME)/SDK/RobotSDK/ModuleDev\t\\\n";
-    stream<<"\t\t$$(HOME)/SDK/RobotSDK/Module/include\t\\\n\n";
-	stream<<"\ttarget.path = $$(HOME)/SDK/RobotSDK/Module/SharedLibrary\n";
-    stream<<"\tINSTALLS += target\n\n";
-    stream<<"\tINSTALL_PREFIX = $$(HOME)/SDK/RobotSDK/Module/include\n";
-    stream<<"\tINSTALL_HEADERS = $$INSTALLHEADERS\n";
-    stream<<"\tinclude(Kernel.pri)\n";
-    stream<<"}\n\n";
-    stream<<"win32{\n";
-    stream<<"\tINCLUDEPATH *= \t\\\n";
-    stream<<"\t\t.\t\\\n";
-    stream<<"\t\t$$(RobotSDK_Kernel)/include\t\\\n";
-    stream<<"\t\t$$(RobotSDK_ModuleDev)\t\\\n";
-    stream<<"\t\t$$(RobotSDK_Module)\t\\\n\n";
-	stream<<"\t\t$$(RobotDep_Include)\t\\\n\n";
-    stream<<"}\n\n";
-    
     file.close();
-    file.setFileName(QString("%1/Kernel.pri").arg(outputdir));
-    if(!file.open(QIODevice::WriteOnly|QIODevice::Text))
+
+    file.setFileName(QString("%1/RobotSDK_Main.pri").arg(ROBOTSDKTOOLS));
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
         return;
     }
+    textcontent=file.readAll();
+    file.close();
+    file.setFileName(QString("%1/RobotSDK_Main.pri").arg(fileinfo.absolutePath()));
+    file.open(QIODevice::WriteOnly|QIODevice::Text);
     stream.setDevice(&file);
-    stream<<"for(header, INSTALL_HEADERS) {\n";
-    stream<<"\tpath = $${INSTALL_PREFIX}/$${dirname(header)}\n";
-    stream<<"\teval(headers_$${path}.files += $$header)\n";
-    stream<<"\teval(headers_$${path}.path = $$path)\n";
-    stream<<"\teval(INSTALLS *= headers_$${path})\n";
-    stream<<"}\n";
+    stream<<textcontent;
+    file.close();
+
+    file.setFileName(QString("%1/RobotSDK_Install.pri").arg(ROBOTSDKTOOLS));
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        return;
+    }
+    textcontent=file.readAll();
+    file.close();
+    file.setFileName(QString("%1/RobotSDK_Install.pri").arg(fileinfo.absolutePath()));
+    file.open(QIODevice::WriteOnly|QIODevice::Text);
+    stream.setDevice(&file);
+    stream<<textcontent;
     file.close();
     return;
 }
 
-#elif defined(Q_OS_WIN)
-
-void ScanInterfaceFunction::configProject()
+void ScanInterfaceFunction::configVSProject()
 {
 	QDomDocument * projectdoc=new QDomDocument();
 	QString filename=outputvcxproj;
@@ -2803,7 +2678,7 @@ void ScanInterfaceFunction::configProject()
 		}
 		QDomElement outputfileelem=itemdefine.firstChildElement("Link").firstChildElement("OutputFile");
 		QString outputfile=outputfileelem.text();
-		outputfile=QString("$(OutDir)\\$(ProjectName)_$(PlatformToolset)_$(Platform)_$(Configuration).dll");
+        outputfile=QString("$(OutDir)\\$(ProjectName)_$(Configuration).dll");
 		QDomNode tmpnode=outputfileelem.firstChild();
 		while(!tmpnode.isNull()&&!tmpnode.isText())
 		{
@@ -3119,8 +2994,6 @@ void ScanInterfaceFunction::configProject()
 	filterfile.close();
 	delete filterdoc;
 }
-
-#endif
 
 void ScanInterfaceFunction::setText(QDomDocument * tmpdoc, QDomElement & tmproot, QString tag, QString text)
 {
