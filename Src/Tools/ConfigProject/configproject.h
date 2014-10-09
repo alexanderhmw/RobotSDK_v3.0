@@ -20,10 +20,11 @@
     #define ROBOTSDKSHAREDLIBRARY QString("%1/SDK/RobotSDK/Module/SharedLibrary").arg(QString(qgetenv("HOME")))
     #define ROBOTSDKTOOLS QString("%1/SDK/RobotSDK/Tools").arg(QString(qgetenv("HOME")))
 #elif defined(Q_OS_WIN)
-    #define ROBOTSDKKERNEL "RobotSDK_Kernel"
-    #define ROBOTSDKMODULEDEV "RobotSDK_ModuleDev"
-    #define ROBOTSDKMODULE "RobotSDK_Module"
-    #define ROBOTSDKSHAREDLIBRARY "RobotSDK_SharedLibrary"
+    #define ROBOTSDKKERNEL getenv("RobotSDK_Kernel")
+    #define ROBOTSDKMODULEDEV getenv("RobotSDK_ModuleDev")
+    #define ROBOTSDKMODULE getenv("RobotSDK_Module")
+    #define ROBOTSDKSHAREDLIBRARY getenv("RobotSDK_SharedLibrary")
+	#define ROBOTSDKTOOLS getenv("RobotSDK_Tools")
 #endif
 
 class ConfigProject : public QMainWindow

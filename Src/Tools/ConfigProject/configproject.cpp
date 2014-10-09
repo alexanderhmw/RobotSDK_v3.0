@@ -33,11 +33,7 @@ void ConfigProject::browseSlot()
 	}
 	else if(ui.Library->isChecked())
 	{
-#ifdef Q_OS_LINUX
         startdir=ROBOTSDKMODULEDEV;
-#elif defined(Q_OS_WIN)
-		startdir=QString(getenv("RobotSDK_ModuleDev"));
-#endif
 	}
 	else
 	{
