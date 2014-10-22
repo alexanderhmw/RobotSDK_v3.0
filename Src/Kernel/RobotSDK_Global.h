@@ -40,21 +40,22 @@
 #define DECOFUNC_2(NODECONFIG,func) NODECONFIG##_##func
 
 #include<ExModules/Drain/Visualization/visualization.h>
-#include<ExModules/Source/Sensor/sensor.h>
-#include<Core/Edge/edge.h>
 #include<ExModules/Source/UserInput/userinput.h>
-#include<Modules/SourceDrain/sourcedrain.h>
-#include<Core/Edge/triggerlog.h>
-#include<Core/Node/node.h>
-#include<Modules/Processor/processor.h>
-#include<ExModules/Source/Simulator/simulator.h>
-#include<ExModules/Drain/Storage/storage.h>
-#include<Core/Edge/triggerview.h>
 #include<ExModules/Drain/Transmitter/transmitter.h>
-#include<Modules/Drain/drain.h>
+#include<Core/Edge/triggerlog.h>
+#include<ExModules/Source/Simulator/simulator.h>
+#include<ExModules/Source/Sensor/sensor.h>
+#include<Core/Edge/triggerview.h>
+#include<Modules/SourceDrain/sourcedrain.h>
+#include<Modules/Processor/processor.h>
 #include<Modules/Source/source.h>
+#include<Core/Edge/edge.h>
+#include<ExModules/Drain/Storage/storage.h>
+#include<Core/Node/node.h>
+#include<Modules/Drain/drain.h>
 
 #include<qglobal.h>
+#include<qdebug.h>
 #include<qlabel.h>
 #include<qlineedit.h>
 #include<qstring.h>
@@ -72,6 +73,11 @@
 #include<boost/shared_ptr.hpp>
 #include<Accessories/XMLDomInterface/xmldominterface.h>
 
+/*!	\fn void copyQVector(QVector<T1 *> & dst, QVector<T2 *> & src)
+	\brief Copy and convert pointers.
+	\param [in] dst The destination to store pointers.
+	\param [in] src The source to copy.
+*/
 template<class T1, class T2>
 void copyQVector(QVector<T1 *> & dst, QVector<T2 *> & src)
 {

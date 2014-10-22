@@ -5,7 +5,7 @@
     \brief QWidget in Qt.
 */
 
-/*! \defgroup Edge
+/*! \defgroup Edge Edge
     \ingroup Core
     \brief The edge of the graph model.
 */
@@ -96,7 +96,7 @@ protected:
     */
     QTimer timer;
     /*! playpause
-        \breif The button to play or pause the monitor.
+        \brief The button to play or pause the monitor.
     */
     QPushButton playpause;
     /*! \var timerangeinput
@@ -124,7 +124,7 @@ protected:
     */
     double zoomratio;
 	/*! \var panel
-        \brief panel to contain \ref loglayout and \ref viewlayout.
+        \brief panel to contain \ref TriggerLog and \ref TriggerView.
     */
 	QGridLayout panel;
 protected:
@@ -177,7 +177,7 @@ public slots:
     */
     void playPauseTimerSlot();
     /*! \fn void setTimeLineSlot();
-        \breif Slot function to set time line appearance.
+        \brief Slot function to set time line appearance.
     */
     void setTimeLineSlot();
     /*! \fn void drawSlot()

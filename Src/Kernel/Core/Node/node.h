@@ -29,7 +29,7 @@
     \brief The library of the RobotSDK's node.
 */
 
-/*! \defgroup Node_Class
+/*! \defgroup Node_Class Node_CLass
     \brief The class of the RobotSDK's node.
 */
 
@@ -37,7 +37,7 @@
     \brief QObject in Qt.
 */
 
-/*! \defgroup Node
+/*! \defgroup Node Node
     \ingroup Core
     \brief Node in graph model.
 */
@@ -185,7 +185,7 @@ public:
     QVector<boost::shared_ptr<void> > grabInputData(int grabSize);
 	/*! \fn void removeInputParamsData(int removeSize)
 		\brief Remove \a removeSize elements in \ref inputparamsbuffer and \ref inputdatabuffer.
-		\params [in] removeSize The size of removed elements.  
+		\param [in] removeSize The size of removed elements.  
     */
 	void removeInputParamsData(int removeSize);
     /*! \fn void clear()
@@ -194,7 +194,7 @@ public:
     void clear();
 	/*! \fn void setCheckStop(bool flag)
 		\brief Set \ref checkstop
-		\params [in] flag The value of \ref checkstop.  
+		\param [in] flag The value of \ref checkstop.  
     */
 	void setCheckStop(bool flag);
 public slots:
@@ -263,7 +263,7 @@ signals:
     - Source: \image html Source.png
     - Drain: \image html Drain.png
     - Processor: \image html Processor.png
-    - Source-Drain: \image html Source-Drain.png
+    - SourceDrain: \image html Source-Drain.png
 
     Remarks:
     - Node cannot be used directly in the application.

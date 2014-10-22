@@ -53,7 +53,7 @@ protected:
     QPlainTextEdit log;
 public slots:
     /*! \fn void saveSlot()
-        \breif Slot function to save \ref log.
+        \brief Slot function to save \ref log.
     */
     void saveSlot();
     /*! \fn void clearSlot()
@@ -84,5 +84,7 @@ public slots:
     */
     void nodeTriggerTimeSlot(QDateTime curDateTime, Node::NodeTriggerState nodeTriggerState);
 };
+
+/*! @}*/
 
 #endif // TRIGGERLOG_H

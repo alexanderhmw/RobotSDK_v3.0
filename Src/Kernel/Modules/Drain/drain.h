@@ -11,12 +11,12 @@
 	\brief The Library of DrainMulti.
 */
 
-/*! \defgroup Drain
+/*! \defgroup Drain Drain
 	\ingroup Modules
 	\brief The Drain node.
 */
 
-/*! \defgroup ExDrain
+/*! \defgroup ExDrain ExDrain
 	\ingroup ExModules
 	\brief The ExDrain node.
 */

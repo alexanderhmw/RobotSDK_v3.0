@@ -59,4 +59,6 @@ protected:
 	UIWidgetsFptr UIWidgets;
 };
 
+/*! @}*/
+
 #endif // USERINPUT_H

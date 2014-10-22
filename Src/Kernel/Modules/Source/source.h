@@ -6,12 +6,12 @@
 	\brief The Library of Source.
 */
 
-/*! \defgroup Source
+/*! \defgroup Source Source
 	\ingroup Modules
 	\brief The Source node.
 */
 
-/*! \defgroup ExSource
+/*! \defgroup ExSource ExSource
 	\ingroup ExModules
 	\brief The ExSource node.
 */

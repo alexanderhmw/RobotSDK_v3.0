@@ -11,12 +11,12 @@
 	\brief The Library of SourceDrainMulti.
 */
 
-/*! \defgroup SourceDrain
+/*! \defgroup SourceDrain SourceDrain
 	\ingroup Modules
 	\brief The SourceDrain node.
 */
 
-/*! \defgroup ExSourceDrain
+/*! \defgroup ExSourceDrain ExSourceDrain
 	\ingroup ExModules
 	\brief The ExSourceDrain node.
 */

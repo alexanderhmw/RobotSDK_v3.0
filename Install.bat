@@ -19,11 +19,16 @@ xcopy .\Build\Tools\*.exe %ToolPath% /s /e /y
 xcopy .\Build\Tools\*.pri %ToolPath% /s /e /y
 if not exist %ToolPath%\*.xml xcopy .\Build\Tools\* %ToolPath% /s /e /y
 
-
 set KernelPath=%RobotSDK_Kernel:/=\%
 
 if not exist %KernelPath%\NUL mkdir %KernelPath%
 xcopy .\Build\Kernel\* %KernelPath% /s /e /y
+
+if not exist .\Doc\html\NUL echo Doc is not compiled! & goto Finish
+if not exist %KernelPath%\..\Doc\NUL mkdir %KernelPath%\..\Doc
+xcopy .\Doc\html\* %KernelPath%\..\Doc /s /e /y
+
+:Finish
 
 echo Installation Completed!
 

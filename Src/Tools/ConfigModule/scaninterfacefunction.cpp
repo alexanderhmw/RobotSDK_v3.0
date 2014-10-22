@@ -1429,6 +1429,17 @@ void ScanInterfaceFunction::storeRule()
     textstream<<"#include<Accessories/XMLDomInterface/xmldominterface.h>\n";
 	textstream<<"\n";
 
+	/*! \fn QVector<boost::shared_ptr<void> > grabInputParams(int grabSize)
+        \brief Grab the input parameters in the size of \a grabSize from InputPort::inputparamsbuffer.
+        \param [in] grabSize The size of grabbed input parameters.
+        \return The grabbed input parameters in QVector.
+    */
+	textstream<<"/*!\t\\fn void copyQVector(QVector<T1 *> & dst, QVector<T2 *> & src)\n";
+	textstream<<"\t\\brief Copy and convert pointers.\n";
+	textstream<<"\t\\param [in] dst The destination to store pointers.\n";
+	textstream<<"\t\\param [in] src The source to copy.\n";
+	textstream<<"*/\n";
+
 	textstream<<"template<class T1, class T2>\n";
 	textstream<<"void copyQVector(QVector<T1 *> & dst, QVector<T2 *> & src)\n";
 	textstream<<"{\n";

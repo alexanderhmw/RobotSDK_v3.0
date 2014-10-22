@@ -24,7 +24,13 @@
 
 #include<Core/Node/node.h>
 
+/*! \def MARGIN
+    \brief The distance between wave line and frame's edges.
+*/
 #define MARGIN 10
+/*! \def MONITORSIZE
+    \brief The height of the frame.
+*/
 #define MONITORSIZE 150
 
 /*! \struct NodeTriggerPoint
@@ -37,7 +43,7 @@ struct NodeTriggerPoint
     */
     QDateTime datetime;
     /*! \var triggerstate
-        \breif The state of the node's trigger.
+        \brief The state of the node's trigger.
     */
     Node::NodeTriggerState triggerstate;
 };
@@ -50,7 +56,7 @@ class TriggerView : public QWidget
     Q_OBJECT
 public:
     /*! \fn TriggerView(QWidget *parent, Node * node, int timeRange, int timeInterval, double zoomRatio, bool gotoThread)
-        \breif The constructor of the TriggerView.
+        \brief The constructor of the TriggerView.
         \param [in] parent The parent widget, it is Edge.
         \param [in] node The node to be monitored.
         \param [in] timeRange The range of the time to be monitored.
@@ -112,5 +118,7 @@ public slots:
     */
     void drawSlot(QDateTime curDateTime);
 };
+
+/*! @}*/
 
 #endif // TRIGGERVIEW_H

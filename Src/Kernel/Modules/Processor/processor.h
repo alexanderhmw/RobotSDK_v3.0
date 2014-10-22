@@ -11,12 +11,12 @@
 	\brief The Library of ProcessorMulti.
 */
 
-/*! \defgroup Processor
+/*! \defgroup Processor Processor
 	\ingroup Modules
 	\brief The Processor node.
 */
 
-/*! \defgroup ExProcessor
+/*! \defgroup ExProcessor ExProcessor
 	\ingroup ExModules
 	\brief The ExProcessor node.
 */
