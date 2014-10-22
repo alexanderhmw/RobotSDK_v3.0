@@ -1377,7 +1377,7 @@ void ScanInterfaceFunction::storeRule()
     textstream<<QString("\t- If defined RobotSDK_ModuleDev in the project, output type=Q_DECL_EXPORT which is for shared library.\n");
 	textstream<<QString("*/\n");
     textstream<<"#ifdef RobotSDK_ModuleDev\n";
-    textstream<<"#define ROBOTSDK_OUTPU#ifdef Q_OS_LINUXT Q_DECL_EXPORT\n";
+    textstream<<"#define ROBOTSDK_OUTPUT Q_DECL_EXPORT\n";
 	textstream<<"#else\n";
 	textstream<<"#define ROBOTSDK_OUTPUT Q_DECL_IMPORT\n";
 	textstream<<"#endif\n\n";
@@ -1410,6 +1410,7 @@ void ScanInterfaceFunction::storeRule()
 	textstream<<"\n";
 
 	textstream<<"#include<qglobal.h>\n";
+	textstream<<"#include<qdebug.h>\n";
     textstream<<"#include<qlabel.h>\n";
     textstream<<"#include<qlineedit.h>\n";
 	textstream<<"#include<qstring.h>\n";
@@ -1721,6 +1722,7 @@ void ScanInterfaceFunction::createFiles()
 				if(ui.InheritParams->isChecked())
 				{
 					textstream<<QString("//The Params is defined as below\n");
+					textstream<<QString("#include%1\n\n").arg(paramsheader);
 					writeClass(textstream,"Params", paramstype);
 				}
 				else
@@ -1742,6 +1744,7 @@ void ScanInterfaceFunction::createFiles()
 					if(ui.InheritOutputData->isChecked())
 					{
 						textstream<<QString("//The Output Data is defined as below\n");
+						textstream<<QString("#include%1\n\n").arg(outputdataheader);
 						writeClass(textstream,"Data", outputdatatype);
 					}
 					else
@@ -1784,6 +1787,7 @@ void ScanInterfaceFunction::createFiles()
 				if(ui.InheritVars->isChecked())
 				{
 					textstream<<QString("//The Vars is defined as below\n");
+					textstream<<QString("#include%1\n\n").arg(varsheader);
 					writeClass(textstream,"Vars",varstype);
 				}
 				else
