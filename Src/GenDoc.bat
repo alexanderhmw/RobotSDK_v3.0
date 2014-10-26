@@ -2,14 +2,12 @@
 
 set TMPCURPATH=%cd%
 
-cd /D %~dp0\Doc\Doxygen
+cd /D %~dp0\..\Doc\Doxygen
 
 doxygen RobotSDK
 
 echo Documentation Generation Completed!
 
 cd /D %TMPCURPATH%
-
-pause
 
 @echo on

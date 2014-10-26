@@ -4,6 +4,10 @@ set TMPCURPATH=%cd%
 
 cd /D %~dp0
 
+call Src\Tools.bat
+call Src\Kernel.bat
+call Src\GenDoc.bat
+
 if not exist .\Build\Tools\*.exe echo Tools are not built! & goto ExitBat
 
 if not defined RobotSDK_Tools echo RobotSDK_Tools is not defined! & goto ExitBat

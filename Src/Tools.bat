@@ -4,9 +4,9 @@ set TMPCURPATH=%cd%
 
 cd /D %~dp0
 
-if not exist .\Build\Tools\NUL mkdir Build\Tools
-if not exist .\VS\Tools\NUL mkdir VS\Tools
-cd VS\Tools
+if not exist ..\Build\Tools\NUL mkdir ..\Build\Tools
+if not exist ..\VS\Tools\NUL mkdir ..\VS\Tools
+cd ..\VS\Tools
 
 if not "%1"=="" set PATH=%PATH%;%1; & goto Build
 if defined RobotDep_Bin set PATH=%PATH%;%RobotDep_Bin%; & goto PreBuild
