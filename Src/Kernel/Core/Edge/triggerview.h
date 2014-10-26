@@ -74,6 +74,10 @@ protected:
         \brief To store the node for disconnection.
     */
     Node * backupnode;
+    /*! \var backupparent
+        \brief To store the parent for disconnection.
+    */
+    QWidget * backupparent;
     /*! \var nodetag
         \brief The tag of the node (Type_Class_Name)
     */

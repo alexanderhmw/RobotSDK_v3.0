@@ -4,6 +4,7 @@ TriggerView::TriggerView(QWidget *parent, Node * node, int timeRange, int timeIn
     : QWidget(parent)
 {
     backupnode=node;
+    backupparent=parent;
     timerange=timeRange;
     timeinterval=timeInterval;
 	zoomratio=zoomRatio;
@@ -56,7 +57,7 @@ TriggerView::~TriggerView()
 {
     bool flag=1;
     flag&=bool(disconnect(backupnode,SIGNAL(nodeTriggerTimeSignal(QDateTime, Node::NodeTriggerState)),this,SLOT(nodeTriggerTimeSlot(QDateTime, Node::NodeTriggerState))));
-    flag&=bool(disconnect(backupnode,SIGNAL(drawSignal(QDateTime)),this,SLOT(drawSlot(QDateTime))));
+    flag&=bool(disconnect(backupparent,SIGNAL(drawSignal(QDateTime)),this,SLOT(drawSlot(QDateTime))));
 }
 
 void TriggerView::setTimeLine(int timeRange, int timeInterval, double zoomRatio)
