@@ -1,68 +1,112 @@
 #include "configuration.h"
 
-Configuration::Configuration(QWidget *parent)
+Configuration::Configuration(int argc, char *argv[], QWidget *parent)
 	: QMainWindow(parent)
 {
-    ui.setupUi(this);
+	QString DiskDriver;
+	QString QtPath;
+	QString BoostLibPath;
+	if (argc == 2)
+	{
+		DiskDriver = QString(argv[1]);
+	}
+	else if (argc == 3)
+	{
+		DiskDriver = QString(argv[1]);
+		QtPath = QString(argv[2]);
+	}
+	else if (argc == 4)
+	{
+		DiskDriver = QString(argv[1]);
+		QtPath = QString(argv[2]);
+		BoostLibPath = QString(argv[3]);
+	}
+	
+	ui.setupUi(this);
 #ifdef Q_OS_LINUX
-    vsversion="Linux";
+	vsversion = "Linux";
 #elif defined(Q_OS_WIN)
 #ifdef _MSC_VER
-    vsversion=QInputDialog::getItem(this,QString("Select Compiler Version and Platform"),QString("Compiler Version and Platform"),QStringList()<<"v120_x64"<<"v120_Win32"<<"v110_x64"<<"v110_Win32"<<"v100_x64"<<"v100_Win32"<<"v90_x64"<<"v90_Win32"<<"v80_x64"<<"v80_Win32",-1);
-	if(vsversion.size()==0)
+	vsversion = QInputDialog::getItem(this, QString("Select Compiler Version and Platform"), QString("Compiler Version and Platform"), QStringList() << "v120_x64" << "v120_Win32" << "v110_x64" << "v110_Win32" << "v100_x64" << "v100_Win32" << "v90_x64" << "v90_Win32" << "v80_x64" << "v80_Win32", -1);
+	if (vsversion.size() == 0)
 	{
 		exit(0);
 	}
 #else
-    vsversion="MinGW";
+	vsversion = "MinGW";
 #endif
-	QString sdkdriver;
+	QString sdkdriver = DiskDriver;
 #endif
 	ui.vsversion->setText(vsversion);
 
 	QFile file(QString("%1_%2.xml").arg(ConfigurationFile).arg(vsversion));
-	doc=new QDomDocument(QString("Configuration"));
-	if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
-	{	
+	doc = new QDomDocument(QString("Configuration"));
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
 		doc->appendChild(doc->createElement("Configuration"));
 #ifdef Q_OS_WIN
-		QFileInfoList driverlist=QDir::drives();
-		int i,n=driverlist.size();
-		QStringList drivers;
-		for(i=0;i<n;i++)
+		if (sdkdriver.isEmpty())
 		{
-			drivers<<driverlist[i].path();
+			QFileInfoList driverlist = QDir::drives();
+			int i, n = driverlist.size();
+			QStringList drivers;
+			for (i = 0; i < n; i++)
+			{
+				drivers << driverlist[i].path();
+			}
+			sdkdriver = QInputDialog::getItem(this, "Select Driver to Install RobotSDK", "Driver: ", drivers, -1);
+			if (sdkdriver.size() == 0)
+			{
+				exit(0);
+			}
 		}
-		sdkdriver=QInputDialog::getItem(this,"Select Driver to Install RobotSDK","Driver: ",drivers,-1);
-		if(sdkdriver.size()==0)
+		else
 		{
-			exit(0);
+			sdkdriver = sdkdriver + QString(":/");
 		}
 #endif
 	}
 	else
 	{
-        QString errmsg;
-        if(!doc->setContent(&file,&errmsg))
+		QString errmsg;
+		if (!doc->setContent(&file, &errmsg))
 		{
 			delete doc;
 			file.close();
-            QMessageBox::information(this,QString("Configuration Error: "),QString("%1").arg(errmsg));
+			QMessageBox::information(this, QString("Configuration Error: "), QString("%1").arg(errmsg));
 			exit(0);
 		}
 		file.close();
 	}
-	QDomElement root=doc->documentElement();
+	QDomElement root = doc->documentElement();
 
-	robotdepdir=new RegisterDirWidget(this,doc,RobotDep,QStringList()<<"Include"<<"Lib"<<"Bin",1);
+	robotdepdir = new RegisterDirWidget(this, doc, RobotDep, QStringList() << "Include" << "Lib" << "Bin", 1);
 #ifdef Q_OS_LINUX
 #elif defined(Q_OS_WIN)
-    this->addItem(root,RobotDep,"Include",0,"Qt");
-    this->addItem(root,RobotDep,"Lib",0,"Qt");
-    this->addItem(root,RobotDep,"Bin",1,"Qt");
-    this->addItem(root,RobotDep,"Include",0,"Boost");
-    this->addItem(root,RobotDep,"Lib",0,"Boost");
-    this->addItem(root,RobotDep,"Bin",1,"Boost");
+	if (QtPath.isEmpty())
+	{
+		this->addItem(root, RobotDep, "Include", 0, "Qt");
+		this->addItem(root, RobotDep, "Lib", 0, "Qt");
+		this->addItem(root, RobotDep, "Bin", 1, "Qt");
+	}
+	else
+	{
+		this->addItem(root, RobotDep, "Include", 0, "Qt", QString("%1/include").arg(QtPath), 1);
+		this->addItem(root, RobotDep, "Lib", 0, "Qt", QString("%1/lib").arg(QtPath), 1);
+		this->addItem(root, RobotDep, "Bin", 1, "Qt", QString("%1/bin").arg(QtPath), 1);
+	}
+	if (BoostLibPath.isEmpty())
+	{
+		this->addItem(root, RobotDep, "Include", 0, "Boost");
+		this->addItem(root, RobotDep, "Lib", 0, "Boost");
+		this->addItem(root, RobotDep, "Bin", 1, "Boost");
+	}
+	else
+	{
+		this->addItem(root, RobotDep, "Include", 0, "Boost", QString("%1\\..").arg(BoostLibPath), 1);
+		this->addItem(root, RobotDep, "Lib", 0, "Boost", QString("%1").arg(BoostLibPath), 1);
+		this->addItem(root, RobotDep, "Bin", 1, "Boost", QString("%1").arg(BoostLibPath), 1);
+	}
 #endif
 	robotdepdir->loadRegisterDir(root);
 	ui.Panel->addTab(robotdepdir,RobotDep);

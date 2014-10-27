@@ -23,7 +23,7 @@ class Configuration : public QMainWindow
 	Q_OBJECT
 
 public:
-	Configuration(QWidget *parent = 0);
+	Configuration(int argc, char *argv[], QWidget *parent = 0);
 	~Configuration();
 private:
 	Ui::ConfigurationClass ui;
