@@ -214,6 +214,7 @@ void ConfigProject::configProject(QString projectname)
 		int conditionsid=conditions.indexOf(itemdefine.attribute("Condition"));
 		if(conditionsid<0)
 		{
+			itemdefine = itemdefine.nextSiblingElement("ItemDefinitionGroup");
 			continue;
 		}
 		QDomElement predefineelem=itemdefine.firstChildElement("ClCompile").firstChildElement("PreprocessorDefinitions");
