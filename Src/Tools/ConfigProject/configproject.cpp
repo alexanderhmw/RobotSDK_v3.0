@@ -191,7 +191,7 @@ void ConfigProject::configProject(QString projectname)
 		propertygroup.setAttribute("Condition",conditions.at(j));
 		if(ui.Library->isChecked())
 		{
-            setText(projectdoc,propertygroup,"OutDir","$(RobotSDK_SharedLibrary)");
+            setText(projectdoc,propertygroup,"OutDir","$(RobotSDK_SharedLibrary)\\");
 		}
 		else if(ui.Application->isChecked())
 		{
@@ -250,7 +250,7 @@ void ConfigProject::configProject(QString projectname)
 		{
 			QDomElement outputfileelem=itemdefine.firstChildElement("Link").firstChildElement("OutputFile");
 			QString outputfile=outputfileelem.text();
-            outputfile=QString("$(OutDir)\\$(ProjectName)_$(Configuration).dll");
+            outputfile=QString("$(OutDir)$(ProjectName)_$(Configuration).dll");
 			QDomNode tmpnode=outputfileelem.firstChild();
 			while(!tmpnode.isNull()&&!tmpnode.isText())
 			{
