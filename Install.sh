@@ -1,18 +1,21 @@
 #!/bin/sh
-TMPBASEDIR=$(dirname $0);
+TMPBASEDIR=$PWD;
 sudo apt-get -y install qt5-default libboost-all-dev doxygen;
-mkdir -p $HOME/Build/RobotSDK/Tools;cd $HOME/Build/RobotSDK/Tools;
-qmake -makefile $(TMPBASEDIR)/Src/Tools/Tools.pro -r "CONFIG+=release";
+mkdir -p $HOME/Build/RobotSDK/Tools;
+mkdir -p $HOME/Build/RobotSDK/GCC/Tools;cd $HOME/Build/RobotSDK/GCC/Tools;
+qmake -makefile $TMPBASEDIR/Src/Tools/Tools.pro -r "CONFIG+=release";
 make;
 make install;
-mkdir -p $HOME/Build/RobotSDK/Kernel;cd $HOME/Build/RobotSDK/Kernel;
-qmake -makefile $(TMPBASEDIR)/Src/Kernel/Kernel.pro -r "CONFIG+=build_all";
+mkdir -p $HOME/Build/RobotSDK/Kernel;
+mkdir -p $HOME/Build/RobotSDK/GCC/Kernel;cd $HOME/Build/RobotSDK/GCC/Kernel;
+qmake -makefile $TMPBASEDIR/Src/Kernel/Kernel.pro -r -o "Makefile.Release" "CONFIG+=release";
 make -f Makefile.Release;
 make -f Makefile.Release install;
+qmake -makefile $TMPBASEDIR/Src/Kernel/Kernel.pro -r -o "Makefile.Debug" "CONFIG+=debug";
 make -f Makefile.Debug;
 make -f Makefile.Debug install;
-cd $(TMPBASEDIR)/Doc/Doxygen;
+cd $TMPBASEDIR/Doc/Doxygen;
 doxygen RobotSDK;
-cd $(TMPBASEDIR)/Doc/html;
+cd $TMPBASEDIR/Doc/html;
 mkdir -p $HOME/SDK/RobotSDK/Doc;
 cp * $HOME/SDK/RobotSDK/Doc;
