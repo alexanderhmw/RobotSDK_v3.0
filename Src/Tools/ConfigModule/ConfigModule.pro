@@ -4,14 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ConfigModule
 TEMPLATE = app
-
-DEFINES += PRODEFROBOTSDKMODULE=$$(RobotSDK_ModuleDev)
 
 SOURCES += \
     scaninterfacefunction.cpp \
@@ -28,7 +26,7 @@ OTHER_FILES += \
     RobotSDK_Install.pri
 
 unix{
-    DESTDIR = ../../../Build/Tools
+    DESTDIR = $$(HOME)/Build/RobotSDK/Tools
 
     target.path = $$(HOME)/SDK/RobotSDK/Tools
     INSTALLS += target
@@ -39,5 +37,12 @@ unix{
 }
 
 win32{
-    DESTDIR = ../../../Build/Tools
+    DESTDIR = $$(RobotSDK_Tools)/../../../Build/RobotSDK/Tools
+
+    target.path = $$(RobotSDK_Tools)
+    INSTALLS += target
+
+    PUBLISHFILES.path = $$(RobotSDK_Tools)
+    PUBLISHFILES.files = $$OTHER_FILES
+    INSTALLS += PUBLISHFILES
 }

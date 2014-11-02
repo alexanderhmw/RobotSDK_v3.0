@@ -23,12 +23,15 @@ FORMS    += \
     configproject.ui
 
 unix{
-    DESTDIR = ../../../Build/Tools
+    DESTDIR = $$(HOME)/Build/RobotSDK/Tools
 
     target.path = $$(HOME)/SDK/RobotSDK/Tools
     INSTALLS += target
 }
 
 win32{
-    DESTDIR = ../../../Build/Tools
+    DESTDIR = $$(RobotSDK_Tools)/../../../Build/RobotSDK/Tools
+
+    target.path = $$(RobotSDK_Tools)
+    INSTALLS += target
 }

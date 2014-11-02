@@ -91,9 +91,9 @@ Configuration::Configuration(int argc, char *argv[], QWidget *parent)
 	}
 	else
 	{
-		this->addItem(root, RobotDep, "Include", 0, "Qt", QString("%1/include").arg(QtPath), 1);
-		this->addItem(root, RobotDep, "Lib", 0, "Qt", QString("%1/lib").arg(QtPath), 1);
-		this->addItem(root, RobotDep, "Bin", 1, "Qt", QString("%1/bin").arg(QtPath), 1);
+		this->addItem(root, RobotDep, "Include", 0, "Qt", QString("%1\\include").arg(QtPath), 1);
+		this->addItem(root, RobotDep, "Lib", 0, "Qt", QString("%1\\lib").arg(QtPath), 1);
+		this->addItem(root, RobotDep, "Bin", 1, "Qt", QString("%1\\bin").arg(QtPath), 1);
 	}
 	if (BoostLibPath.isEmpty())
 	{

@@ -8,14 +8,7 @@ QT += widgets network opengl xml
 
 CONFIG += staticlib qt
 TEMPLATE = lib
-CONFIG(debug, debug|release){
-    TARGET = Kernel
-	DESTDIR = ../../Build/Kernel/lib/Debug
-}
-else {
-    TARGET = Kernel
-	DESTDIR = ../../Build/Kernel/lib/Release
-}
+TARGET = Kernel
 
 SOURCES += \
     Core/Node/node.cpp \
@@ -58,26 +51,27 @@ OTHER_FILES += \
 
 INCLUDEPATH += .
 
-unix{ 
+unix{
     INCLUDEPATH += /usr/include
-
+	
 	CONFIG(debug, debug|release){
+		DESTDIR = $$(HOME)/Build/RobotSDK/Kernel/lib/Debug
 		target.path = $$(HOME)/SDK/RobotSDK/Kernel/lib/Debug
 	}
 	else {
+		DESTDIR = $$(HOME)/Build/RobotSDK/Kernel/lib/Release
 		target.path = $$(HOME)/SDK/RobotSDK/Kernel/lib/Release
 	}
-	
     
     INSTALLS += target
-
+	
     KERNELPATH = $$(HOME)/SDK/RobotSDK/Kernel/include
-
-    INSTALL_PREFIX = $$KERNELPATH
+    
+	INSTALL_PREFIX = $$KERNELPATH
     INSTALL_HEADERS = $$HEADERS
     include(Kernel.pri)
-
-    robotsdk_createrule.path = $$KERNELPATH
+	
+	robotsdk_createrule.path = $$KERNELPATH
     robotsdk_createrule.files = $$OTHER_FILES
     INSTALLS += robotsdk_createrule
 }
@@ -90,4 +84,28 @@ win32{
     else{
         INCLUDEPATH += $$split(TMPPATH,;)
     }
+	
+	CONFIG(debug, debug|release){
+		DESTDIR = $$(RobotSDK_Kernel)/../../../Build/RobotSDK/Kernel/lib/Debug
+		target.path = $$(RobotSDK_Kernel)/lib/Debug
+	}
+	else {
+		DESTDIR = $$(RobotSDK_Kernel)/../../../Build/RobotSDK/Kernel/lib/Release
+		target.path = $$(RobotSDK_Kernel)/lib/Release
+	}
+    
+    INSTALLS += target
+
+    KERNELPATH = $$(RobotSDK_Kernel)/include
+	
+	INSTALL_PREFIX = $$KERNELPATH
+    INSTALL_HEADERS = $$HEADERS
+    include(Kernel.pri)
+
+	
+	include(Kernel.pri)
+
+	robotsdk_createrule.path = $$KERNELPATH
+    robotsdk_createrule.files = $$OTHER_FILES
+    INSTALLS += robotsdk_createrule
 }
