@@ -2656,7 +2656,7 @@ void ScanInterfaceFunction::configVSProject()
 			propertygroup=projectroot.appendChild(projectdoc->createElement("PropertyGroup")).toElement();
 		}
 		propertygroup.setAttribute("Condition",conditions.at(j));
-        setText(projectdoc,propertygroup,"OutDir","$(RobotSDK_SharedLibrary)");
+        setText(projectdoc,propertygroup,"OutDir","$(RobotSDK_SharedLibrary)\\");
         setText(projectdoc,propertygroup,"IncludePath","$(RobotSDK_Kernel)\\include;$(RobotSDK_ModuleDev);$(RobotSDK_Module);$(RobotDep_Include);$(IncludePath)");
         setText(projectdoc,propertygroup,"LibraryPath","$(RobotSDK_Kernel)\\lib\\$(Configuration);$(RobotDep_Lib);$(LibraryPath)");
 		propertygroup=propertygroup.nextSiblingElement("PropertyGroup");
