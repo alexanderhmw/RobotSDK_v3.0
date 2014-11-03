@@ -1159,7 +1159,7 @@ void ScanInterfaceFunction::browseOutputDirSlot()
 	QString vcxproj;
 	if (ui.newqtpro->isChecked())
 	{
-		vcxproj = QFileDialog::getSaveFileName(this,"Output Qt Project",ui.LibraryDir->text(),QString("Qt Project File (*.pro)"));
+		vcxproj = QFileDialog::getSaveFileName(this,"Output Qt Project",QString("%1\\").arg(ui.LibraryDir->text()),QString("Qt Project File (*.pro)"));
 	}
 	else
 	{
@@ -2477,15 +2477,15 @@ void ScanInterfaceFunction::configQtProject()
 	{
 		textcontent = textcontent + QString("\nPROJNAME = %1").arg(fileinfo.baseName());
 	}
-	if (!textcontent.contains("INSTALLTYPE = MOD"))
+	if (!textcontent.contains("INSTTYPE = MOD"))
 	{
 		textcontent = textcontent + QString("\nINSTALLTYPE = MOD");
 	}
-	if (textcontent.contains("INSTALLTYPE = APP"))
+	if (textcontent.contains("INSTTYPE = APP"))
 	{
 		textcontent.remove(QString("\nINSTALLTYPE = APP"));
 	}
-	if (textcontent.contains("INSTALLTYPE = SDK"))
+	if (textcontent.contains("INSTTYPE = SDK"))
 	{
 		textcontent.remove(QString("\nINSTALLTYPE = SDK"));
 	}
