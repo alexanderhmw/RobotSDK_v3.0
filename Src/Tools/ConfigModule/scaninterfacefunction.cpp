@@ -2493,6 +2493,11 @@ void ScanInterfaceFunction::configQtProject()
 	{
 		textcontent = textcontent + QString("\ninclude(RobotSDK_Main.pri)");
 	}
+	else
+	{
+		textcontent.remove(QString("\ninclude(RobotSDK_Main.pri)"));
+		textcontent = textcontent + QString("\ninclude(RobotSDK_Main.pri)");
+	}
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
 		return;
