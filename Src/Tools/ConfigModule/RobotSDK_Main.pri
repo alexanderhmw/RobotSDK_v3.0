@@ -78,7 +78,14 @@ win32{
     DESTDIR = $$(RobotSDK_Kernel)/../../../Build/$$INSTTYPE/$$PROJNAME
 
     equals(INSTTYPE, "SDK") {
-        target.path = $$(RobotSDK_Kernel)/../../../$$INSTTYPE/$$PROJNAME/lib
+        TMPPATH=$$(RobotDep_Include)
+        isEmpty(TMPPATH) {
+            error($$TMPPATH is not Specified.)
+        }
+        else{
+            INCLUDEPATH += $$split(TMPPATH,;)
+        }
+		target.path = $$(RobotSDK_Kernel)/../../../$$INSTTYPE/$$PROJNAME/lib
         CONFIG(debug, debug|release){
             TARGET = $${PROJNAME}_Debug
         }
