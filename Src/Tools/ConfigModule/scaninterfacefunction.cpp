@@ -1156,7 +1156,15 @@ void ScanInterfaceFunction::clearExFuncsSlot()
 
 void ScanInterfaceFunction::browseOutputDirSlot()
 {
-    QString vcxproj=QFileDialog::getOpenFileName(this,"Output VC Project",ui.LibraryDir->text(),QString("Project File (*.vcxproj *.pro)"));
+	QString vcxproj;
+	if (ui.newqtpro->isChecked())
+	{
+		vcxproj = QFileDialog::getSaveFileName(this,"Output Qt Project",ui.LibraryDir->text(),QString("Qt Project File (*.pro)"));
+	}
+	else
+	{
+		vcxproj = QFileDialog::getOpenFileName(this, "Output Project", ui.LibraryDir->text(), QString("Project File (*.vcxproj *.pro)"));
+	}    
 	if(vcxproj.size()>0)
 	{
 		if(vcxproj.startsWith(ui.LibraryDir->text()))
@@ -2420,72 +2428,79 @@ void ScanInterfaceFunction::replaceText(QString & text)
 
 void ScanInterfaceFunction::configQtProject()
 {
-    QStringList headerlist;
-    QStringList cpplist;
-    QStringList installheaderslist;
-    QString editpath=nodeclassname;
-    QString noeditpath=nodeclassname;
-    editpath=QString("%1/%2/%3").arg(editpath.replace("_","/")).arg(nodetypename).arg(EDITFOLDER);
-    noeditpath=QString("%1/%2/%3").arg(noeditpath.replace("_","/")).arg(nodetypename).arg(NOEDITFOLDER);
-    if(!ui.OnlyExFunc->isChecked())
-    {
-        headerlist<<QString("%3/%1_%2_ParamsData.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
-            <<QString("%3/%1_%2_Vars.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
-            <<QString("%3/%1_%2_PrivFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath)
-            <<QString("%3/%1_%2_PrivCoreFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
-        cpplist<<QString("%3/%1_%2_PrivFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(editpath)
-            <<QString("%3/%1_%2_PrivCoreFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
-        installheaderslist<<QString("%3/%1_%2_ParamsData.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
-                    <<QString("%3/%1_%2_Vars.h").arg(nodetypename).arg(nodeclassname).arg(editpath);
-    }
-    if(exfuncs.size()>0)
-    {
-        headerlist<<QString("%3/%1_%2_PrivExFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
-        cpplist<<QString("%3/%1_%2_PrivExFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(editpath);
-    }
+	QStringList headerlist;
+	QStringList cpplist;
+	QStringList installheaderslist;
+	QString editpath = nodeclassname;
+	QString noeditpath = nodeclassname;
+	editpath = QString("%1/%2/%3").arg(editpath.replace("_", "/")).arg(nodetypename).arg(EDITFOLDER);
+	noeditpath = QString("%1/%2/%3").arg(noeditpath.replace("_", "/")).arg(nodetypename).arg(NOEDITFOLDER);
+	if (!ui.OnlyExFunc->isChecked())
+	{
+		headerlist << QString("%3/%1_%2_ParamsData.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
+			<< QString("%3/%1_%2_Vars.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
+			<< QString("%3/%1_%2_PrivFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath)
+			<< QString("%3/%1_%2_PrivCoreFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
+		cpplist << QString("%3/%1_%2_PrivFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(editpath)
+			<< QString("%3/%1_%2_PrivCoreFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
+		installheaderslist << QString("%3/%1_%2_ParamsData.h").arg(nodetypename).arg(nodeclassname).arg(editpath)
+			<< QString("%3/%1_%2_Vars.h").arg(nodetypename).arg(nodeclassname).arg(editpath);
+	}
+	if (exfuncs.size() > 0)
+	{
+		headerlist << QString("%3/%1_%2_PrivExFunc.h").arg(nodetypename).arg(nodeclassname).arg(noeditpath);
+		cpplist << QString("%3/%1_%2_PrivExFunc.cpp").arg(nodetypename).arg(nodeclassname).arg(editpath);
+	}
 
-    QFile file;
-    QTextStream stream;
-    QString textcontent;
-    QString filename=outputvcxproj;
-    QFileInfo fileinfo(filename);
+	QFile file;
+	QTextStream stream;
+	QString textcontent;
+	QString filename = outputvcxproj;
+	QFileInfo fileinfo(filename);
 
-    file.setFileName(filename);
-    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
-    {
-        return;
-    }
-    textcontent=file.readAll();
-    file.close();
-    if(textcontent.contains("TEMPLATE = subdirs"))
-    {
-        QMessageBox::information(this,"Error","This is a subdirs project");
-        return;
-    }
-    if(!textcontent.contains(QString("PROJNAME = %1").arg(fileinfo.baseName())))
-    {
-        textcontent=textcontent+QString("\nPROJNAME = %1").arg(fileinfo.baseName());
-    }
-    if(!textcontent.contains("INSTALLTYPE = MOD"))
-    {
-        textcontent=textcontent+QString("\nINSTALLTYPE = MOD");
-    }
-    if(textcontent.contains("INSTALLTYPE = APP"))
-    {
-        textcontent.remove(QString("\nINSTALLTYPE = APP"));
-    }
-    if(textcontent.contains("INSTALLTYPE = SDK"))
-    {
-        textcontent.remove(QString("\nINSTALLTYPE = SDK"));
-    }
-    if(!textcontent.contains("include(RobotSDK_Main.pri)"))
-    {
-        textcontent=textcontent+QString("\ninclude(RobotSDK_Main.pri)");
-    }
-    file.open(QIODevice::WriteOnly|QIODevice::Text);
-    stream.setDevice(&file);
-    stream<<textcontent;
-    file.close();
+	file.setFileName(filename);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		textcontent.clear();
+	}
+	else
+	{
+		textcontent = file.readAll();
+		file.close();
+	}
+	if (textcontent.contains("TEMPLATE = subdirs"))
+	{
+		QMessageBox::information(this, "Error", "This is a subdirs project");
+		return;
+	}
+	if (!textcontent.contains(QString("PROJNAME = %1").arg(fileinfo.baseName())))
+	{
+		textcontent = textcontent + QString("\nPROJNAME = %1").arg(fileinfo.baseName());
+	}
+	if (!textcontent.contains("INSTALLTYPE = MOD"))
+	{
+		textcontent = textcontent + QString("\nINSTALLTYPE = MOD");
+	}
+	if (textcontent.contains("INSTALLTYPE = APP"))
+	{
+		textcontent.remove(QString("\nINSTALLTYPE = APP"));
+	}
+	if (textcontent.contains("INSTALLTYPE = SDK"))
+	{
+		textcontent.remove(QString("\nINSTALLTYPE = SDK"));
+	}
+	if (!textcontent.contains("include(RobotSDK_Main.pri)"))
+	{
+		textcontent = textcontent + QString("\ninclude(RobotSDK_Main.pri)");
+	}
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		return;
+	}
+	stream.setDevice(&file);
+	stream << textcontent;
+	file.close();
+   
 
     QString prifile=QString("%1/%2.pri").arg(fileinfo.absolutePath()).arg(fileinfo.baseName());
     file.setFileName(prifile);
@@ -2536,12 +2551,6 @@ void ScanInterfaceFunction::configQtProject()
         return;
     }
     stream.setDevice(&file);
-    stream<<"#-------------------------------------------------\n";
-    stream<<"#\n";
-    stream<<QString("# Project created by QtCreator %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss"));
-    stream<<"#\n";
-    stream<<"#-------------------------------------------------\n\n";
-
     if(sources.size()>0)
     {
         stream<<sources<<"\n\n";

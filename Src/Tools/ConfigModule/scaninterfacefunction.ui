@@ -763,6 +763,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="newqtpro">
+            <property name="text">
+             <string>New Qt_Pro</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="BrowseOutputDir">
             <property name="text">
              <string>Browse...</string>
