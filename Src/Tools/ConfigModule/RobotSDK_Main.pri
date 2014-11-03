@@ -15,7 +15,8 @@ equals(INSTTYPE, "MOD") {
     QT += core opengl xml widgets gui
     TEMPLATE = lib
     CONFIG += qt
-    DEFINES *= RobotSDK_ModuleDev
+    DEFINES += RobotSDK_ModuleDev
+    include($${PROJNAME}.pri)
 }
 
 unix{
@@ -50,8 +51,7 @@ unix{
     equals(INSTTYPE, "MOD") {
         INCLUDEPATH += $$(HOME)/SDK/RobotSDK/Kernel/include
         INCLUDEPATH += $$(HOME)/SDK/RobotSDK/ModuleDev
-        INCLUDEPATH += $$(HOME)/SDK/RobotSDK/Module/include
-	include($${PROJNAME}.pri)
+        INCLUDEPATH += $$(HOME)/SDK/RobotSDK/Module/include	
         
         target.path = $$(HOME)/SDK/RobotSDK/Module/SharedLibrary
         CONFIG(debug, debug|release){
