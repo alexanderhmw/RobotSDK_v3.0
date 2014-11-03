@@ -35,12 +35,20 @@ void ConfigProject::browseSlot()
 	{
         startdir=ROBOTSDKMODULEDEV;
 	}
+	else if (ui.SDK->isChecked())
+	{
+		startdir = QString();
+	}
+	if (ui.Recursive->isChecked())
+	{
+		QString projectsdir = QFileDialog::getExistingDirectory(this, "Project Dir", startdir);
+		ui.ProjectsDir->setText(projectsdir);
+	}
 	else
 	{
-		return;
-	}
-	QString projectsdir=QFileDialog::getExistingDirectory(this,"Project Dir",startdir);
-	ui.ProjectsDir->setText(projectsdir);
+		QString projectsdir = QFileDialog::getOpenFileName(this, "Project Dir", startdir, QString("Project File (*.vcxproj *.pro)"));		
+		ui.ProjectsDir->setText(projectsdir);
+	}	
 }
 
 void ConfigProject::configSlot()
@@ -81,35 +89,62 @@ void ConfigProject::setText(QDomDocument * tmpdoc, QDomElement & tmproot, QStrin
 
 void ConfigProject::configProjects(QString projectsdir)
 {
-	QDir dir(projectsdir);
-	if(!dir.exists())
+	QFileInfo tmpinfo=QFileInfo(projectsdir);
+	if (tmpinfo.isDir())
 	{
-		return;
+		QDir dir(projectsdir);
+		if (!dir.exists())
+		{
+			return;
+		}
+		dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+		dir.setSorting(QDir::DirsFirst);
+		QFileInfoList list = dir.entryInfoList();
+		int i, n = list.size();
+		for (i = 0; i<n; i++)
+		{
+			QFileInfo fileinfo = list.at(i);
+			QString filename = fileinfo.absoluteFilePath();
+			if (fileinfo.isDir() && ui.Recursive->isChecked())
+			{
+				configProjects(filename);
+			}
+			else if (fileinfo.fileName().endsWith(".vcxproj"))
+			{
+				if (!ui.SDK->isChecked())
+				{
+					configProject(filename);
+				}
+			}
+			else if (fileinfo.fileName().endsWith(".sln"))
+			{
+				configSolution(filename);
+			}
+			else if (fileinfo.fileName().endsWith(".pro"))
+			{
+				configQtPro(filename);
+			}
+		}
 	}
-	dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-	dir.setSorting(QDir::DirsFirst);
-	QFileInfoList list=dir.entryInfoList();
-	int i,n=list.size();
-	for(i=0;i<n;i++)
+	else if (tmpinfo.isFile())
 	{
-		QFileInfo fileinfo=list.at(i);
-		QString filename=fileinfo.absoluteFilePath();
-		if(fileinfo.isDir()&&ui.Recursive->isChecked())
+		QFileInfo fileinfo = tmpinfo;
+		QString filename = fileinfo.absoluteFilePath();
+		if (fileinfo.fileName().endsWith(".vcxproj"))
 		{
-			configProjects(filename);
+			if (!ui.SDK->isChecked())
+			{
+				configProject(filename);
+			}
 		}
-		else if(fileinfo.fileName().endsWith(".vcxproj"))
-		{
-			configProject(filename);
-		}
-		else if(fileinfo.fileName().endsWith(".sln"))
+		else if (fileinfo.fileName().endsWith(".sln"))
 		{
 			configSolution(filename);
 		}
-        else if(fileinfo.fileName().endsWith(".pro"))
-        {
-            configQtPro(filename);
-        }
+		else if (fileinfo.fileName().endsWith(".pro"))
+		{
+			configQtPro(filename);
+		}
 	}
 }
 
@@ -318,10 +353,13 @@ void ConfigProject::configQtPro(QString proname)
     file.setFileName(filename);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
-        return;
+		textcontent.clear();
     }
-    textcontent=file.readAll();
-    file.close();
+	else
+	{
+		textcontent = file.readAll();
+		file.close();
+	}    
     if(textcontent.contains("TEMPLATE = subdirs"))
     {
         return;
@@ -332,38 +370,58 @@ void ConfigProject::configQtPro(QString proname)
     }
     if(ui.Library->isChecked())
     {
-        if(!textcontent.contains("INSTALLTYPE = MOD"))
+        if(!textcontent.contains("INSTTYPE = MOD"))
         {
-            textcontent=textcontent+QString("\nINSTALLTYPE = MOD");
+            textcontent=textcontent+QString("\nINSTTYPE = MOD");
         }
-        if(textcontent.contains("INSTALLTYPE = APP"))
+        if(textcontent.contains("INSTTYPE = APP"))
         {
-            textcontent.remove(QString("\nINSTALLTYPE = APP"));
+            textcontent.remove(QString("\nINSTTYPE = APP"));
         }
-        if(textcontent.contains("INSTALLTYPE = SDK"))
+        if(textcontent.contains("INSTTYPE = SDK"))
         {
-            textcontent.remove(QString("\nINSTALLTYPE = SDK"));
+            textcontent.remove(QString("\nINSTTYPE = SDK"));
         }
     }
     else if(ui.Application->isChecked())
     {
-        if(!textcontent.contains("INSTALLTYPE = APP"))
+        if(!textcontent.contains("INSTTYPE = APP"))
         {
-            textcontent=textcontent+QString("\nINSTALLTYPE = APP");
+            textcontent=textcontent+QString("\nINSTTYPE = APP");
         }
-        if(textcontent.contains("INSTALLTYPE = MOD"))
+        if(textcontent.contains("INSTTYPE = MOD"))
         {
-            textcontent.remove(QString("\nINSTALLTYPE = MOD"));
+            textcontent.remove(QString("\nINSTTYPE = MOD"));
         }
-        if(textcontent.contains("INSTALLTYPE = SDK"))
+        if(textcontent.contains("INSTTYPE = SDK"))
         {
-            textcontent.remove(QString("\nINSTALLTYPE = SDK"));
+            textcontent.remove(QString("\nINSTTYPE = SDK"));
         }
     }
+	else if (ui.SDK->isChecked())
+	{
+		if (!textcontent.contains("INSTTYPE = SDK"))
+		{
+			textcontent = textcontent + QString("\nINSTTYPE = SDK");
+		}
+		if (textcontent.contains("INSTTYPE = MOD"))
+		{
+			textcontent.remove(QString("\nINSTTYPE = MOD"));
+		}
+		if (textcontent.contains("INSTTYPE = APP"))
+		{
+			textcontent.remove(QString("\nINSTTYPE = APP"));
+		}
+	}
     if(!textcontent.contains("include(RobotSDK_Main.pri)"))
     {
         textcontent=textcontent+QString("\ninclude(RobotSDK_Main.pri)");
     }
+	else
+	{
+		textcontent.remove(QString("\ninclude(RobotSDK_Main.pri)"));
+		textcontent = textcontent + QString("\ninclude(RobotSDK_Main.pri)");
+	}
     file.open(QIODevice::WriteOnly|QIODevice::Text);
     stream.setDevice(&file);
     stream<<textcontent;
