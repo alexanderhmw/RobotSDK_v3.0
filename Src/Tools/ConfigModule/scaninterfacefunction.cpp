@@ -2479,15 +2479,15 @@ void ScanInterfaceFunction::configQtProject()
 	}
 	if (!textcontent.contains("INSTTYPE = MOD"))
 	{
-		textcontent = textcontent + QString("\nINSTALLTYPE = MOD");
+		textcontent = textcontent + QString("\nINSTTYPE = MOD");
 	}
 	if (textcontent.contains("INSTTYPE = APP"))
 	{
-		textcontent.remove(QString("\nINSTALLTYPE = APP"));
+		textcontent.remove(QString("\nINSTTYPE = APP"));
 	}
 	if (textcontent.contains("INSTTYPE = SDK"))
 	{
-		textcontent.remove(QString("\nINSTALLTYPE = SDK"));
+		textcontent.remove(QString("\nINSTTYPE = SDK"));
 	}
 	if (!textcontent.contains("include(RobotSDK_Main.pri)"))
 	{
