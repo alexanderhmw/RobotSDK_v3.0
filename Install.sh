@@ -19,3 +19,4 @@ doxygen RobotSDK;
 cd $TMPBASEDIR/Doc/html;
 mkdir -p $HOME/SDK/RobotSDK/Doc;
 cp * $HOME/SDK/RobotSDK/Doc;
+rm -rf $TMPBASEDIR/Doc/html;

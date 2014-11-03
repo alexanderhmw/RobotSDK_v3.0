@@ -86,6 +86,8 @@ set "KernelPath=%RobotSDK_Kernel:/=\%"
 if not exist %TMPBATPATH%\Doc\html\NUL echo Documentation is not compiled! & goto Finish
 if not exist %KernelPath%\..\Doc\NUL mkdir %KernelPath%\..\Doc
 xcopy %TMPBATPATH%\Doc\html\* %KernelPath%\..\Doc /s /e /y
+RMDIR /S /Q %TMPBATPATH%\Doc\html
+
 
 echo Documentation Generation Completed!
 
